@@ -148,13 +148,12 @@ Measured on the future test window. Catch rate = share of illicit transactions f
 - `src/workers/`: one Web Worker per member, plus coordinator, baseline and replay workers.
 - `node/`: distributed mode (`lab-server.ts` per member, `coordinator.ts --spawn --submit`), deploy and
   settlement scripts.
-- `contracts/`: `TesseraLedger.sol` + `ConsortiumUSD` (BSC testnet), `TesseraPayouts.sol` (Ethereum Sepolia, AUSD).
+- `contracts/`: `TesseraLedger.sol` (BSC testnet, run records), `TesseraPayouts.sol` (Ethereum Sepolia, AUSD payouts).
 - `src/app/`: React + Vite, Chakra + MUI, framer-motion, Recharts. Hosted on GitHub Pages.
 
 | Contract | Chain | Address |
 |---|---|---|
 | TesseraLedger | BSC testnet (97) | `0x751199289a537366a6f56f2c54fb4d5938221ea3` |
-| cUSD (record token) | BSC testnet (97) | `0x2A001a150DECF58B9e2d3cFC4b299959cc39E121` |
 | TesseraPayouts | Ethereum Sepolia (11155111) | `0xd7ddbbd3468821878bdf5fe2f39e5b9820bf7f89` |
 | AUSD (Agora testnet) | Ethereum Sepolia | `0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC` |
 

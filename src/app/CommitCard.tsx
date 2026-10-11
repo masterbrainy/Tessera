@@ -48,7 +48,7 @@ export default function CommitCard({ state, onLedger }: { state: FedState; onLed
       <Text fontSize="22px" fontWeight={800} mt={1}>Commit this run and pay the exchanges</Text>
       <Text fontSize="14px" color="var(--ink-2)" mt={2} lineHeight={1.7}>
         One transaction to <code>TesseraLedger</code> on BSC testnet records the exact config, the model fingerprint after each of the{" "}
-        {summary.rounds.length} rounds, and every exchange's per-round contribution, then mints the 10,000 cUSD pool to them pro rata.
+        {summary.rounds.length} rounds, and every exchange's per-round contribution, and the payout split. Committed runs are then paid in AUSD on Ethereum Sepolia, pro rata.
         Because training is deterministic, anyone can replay it from the config and check every fingerprint.
       </Text>
       <Flex mt={3} gap={2} wrap="wrap">

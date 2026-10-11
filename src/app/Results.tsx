@@ -113,7 +113,7 @@ function Payouts({ state, onPick }: { state: FedState; onPick: (lab: number) => 
       <Text fontSize="14px" color="var(--ink-2)" mt={1} lineHeight={1.6}>
         Each round, the coordinator rebuilds the model from every possible subset of exchanges ({1 << state.cfg.numLabs} coalitions)
         and measures how much each exchange improves it on a shared validation window. That's its exact Shapley value.
-        A 10,000 cUSD pool per run is split in proportion.
+        Committed runs pay a 1,000 AUSD pool in proportion.
       </Text>
       <Box mt={4}>
         {state.labs.map((l, i) => {
@@ -136,7 +136,7 @@ function Payouts({ state, onPick }: { state: FedState; onPick: (lab: number) => 
                 <Box position="absolute" left="50%" top={0} bottom={0} w="1px" bg="var(--line)" />
               </Box>
               <Box w="120px" textAlign="right" flexShrink={0}>
-                <Text fontSize="16px" fontWeight={750}>{(bps[i] ?? 0) === 0 ? "0" : ((bps[i] / 10000) * 10000).toLocaleString()} cUSD</Text>
+                <Text fontSize="16px" fontWeight={750}>{(bps[i] ?? 0) === 0 ? "0" : Math.round((bps[i] / 10000) * 1000).toLocaleString()} AUSD</Text>
                 <Text fontSize="11px" color={rejected ? "#c2410c" : "var(--muted)"}>
                   {rejected ? `rejected ${rejected}/${state.rounds.length} rounds` : `${((bps[i] ?? 0) / 100).toFixed(1)}% of pool`}
                 </Text>

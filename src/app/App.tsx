@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { Button } from "@mui/material";
 import { EXCHANGES } from "../engine/data";
@@ -14,6 +14,7 @@ import ExchangeDialog from "./ExchangeDialog";
 import HowItWorks from "./HowItWorks";
 import LedgerPage from "./LedgerPage";
 import ScorePage from "./ScorePage";
+import BuilderPage from "./builder/BuilderPage";
 import { useFederation, type FedState } from "./useFederation";
 import { colorOf, pct } from "./palette";
 
@@ -49,7 +50,7 @@ function intro(state: FedState) {
     };
   }
   return {
-    h: "Crypto exchanges train one anti-money-laundering model together, without sharing customer data.",
+    h: "Benchmark: 5 exchanges, one of them malicious, every run replay-verifiable onchain.",
     p: "Each exchange only sees part of the illicit flow. Tessera lets them pool what they learn instead of what they hold, prices every member's contribution exactly, and settles payouts onchain. Real data: 46,564 labeled Bitcoin transactions (Elliptic).",
   };
 }
@@ -86,7 +87,9 @@ function useFlowers(state: FedState) {
 export default function App() {
   const { state, start, stop } = useFederation();
   const [cfg, setCfg] = useState<RunConfig>(DEFAULT_CONFIG);
-  const [view, setView] = useState<View>("consortium");
+  const [view, setView] = useState<View>("build");
+  const [builtModel, setBuiltModel] = useState<Float64Array | null>(null);
+  const onModel = useCallback((p: Float64Array | null) => setBuiltModel(p), []);
   const [howOpen, setHowOpen] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
   const flowers = useFlowers(state.status === "idle" ? { ...state, cfg } : state);
@@ -110,6 +113,16 @@ export default function App() {
       <div className="app-shell">
         <TopBar view={view} onView={setView} onHow={() => setHowOpen(true)} />
         <main id="main">
+          <div style={{ display: view === "build" ? "block" : "none" }}>
+            <BuilderPage onModel={onModel} />
+            {builtModel && (
+              <div style={{ marginTop: 24, display: "flex", justifyContent: "center" }}>
+                <Button variant="outlined" onClick={() => setView("screen")} sx={{ textTransform: "none" }}>
+                  Put the trained model to work: screen transactions →
+                </Button>
+              </div>
+            )}
+          </div>
           {view === "consortium" && (
             <>
               <section className="page-intro">
@@ -168,11 +181,11 @@ export default function App() {
           )}
           {view === "ledger" && <LedgerPage />}
           {view === "screen" && (
-            <ScorePage params={state.summary?.params ?? null} cfg={state.summary ? state.cfg : null} onRunFirst={run} />
+            <ScorePage params={builtModel ?? state.summary?.params ?? null} cfg={builtModel ? DEFAULT_CONFIG : state.summary ? state.cfg : null} onRunFirst={() => setView("build")} />
           )}
         </main>
         <footer className="site-footer">
-          Built at B@BHacks 2.0 · Elliptic dataset (real, anonymized Bitcoin transactions) · contracts on BSC testnet ·{" "}
+          Tessera: a market for what private data is worth · Built at B@BHacks 2.0 · Elliptic dataset (real, anonymized Bitcoin transactions) · payouts settle on BSC testnet ·{" "}
           <a href="https://github.com/masterbrainy/Tessera" target="_blank" rel="noreferrer">source</a>
         </footer>
         <ExchangeDialog lab={picked} state={state} onClose={() => setPicked(null)} />

@@ -7,6 +7,7 @@ import { shapeOf, type RunConfig } from "../engine/federation";
 import { predict } from "../engine/model";
 import { DATA_URL } from "./useFederation";
 import { pct } from "./palette";
+import ScreenUpload from "./builder/ScreenUpload";
 
 const TEST_SPLIT = 2;
 const FALSE_ALARM_RATE = 0.01;
@@ -286,11 +287,11 @@ interface ScorePageProps {
 function EmptyState({ onRunFirst }: { onRunFirst: () => void }) {
   return (
     <Box {...panelProps} maxW="720px">
-      <Text fontSize="18px" fontWeight={700} color="var(--ink)">Train the consortium model first</Text>
+      <Text fontSize="18px" fontWeight={700} color="var(--ink)">Train a model in the data market first</Text>
       <Text mt={2} mb={5} fontSize="15px" lineHeight="1.7" color="var(--ink-2)">
         This page screens transactions with the model your exchanges just trained together. Run the consortium once and come back here to try it on weeks of data it has never seen.
       </Text>
-      <Button variant="contained" disableElevation onClick={onRunFirst}>Run the consortium</Button>
+      <Button variant="contained" disableElevation onClick={onRunFirst}>Go to the data market</Button>
     </Box>
   );
 }
@@ -302,9 +303,9 @@ export default function ScorePage({ params, cfg, onRunFirst }: ScorePageProps) {
   return (
     <Box>
       <div className="page-intro">
-        <h1>Screen a transaction.</h1>
+        <h1>Put the trained model to work.</h1>
         <p>
-          The consortium model flags suspicious flow in time steps 35–49, a future window no exchange trained on. Alerts fire at a threshold that lets only 1% of licit transactions through as false alarms.
+          The model the contributors paid into now protects them: screen your own transactions with it, or explore how it flags suspicious flow in time steps 35–49, a future window no one trained on. Alerts fire at a threshold where only 1% of licit transactions raise a false alarm.
         </p>
       </div>
       {!hasModel && <EmptyState onRunFirst={onRunFirst} />}
@@ -318,6 +319,7 @@ export default function ScorePage({ params, cfg, onRunFirst }: ScorePageProps) {
       )}
       {hasModel && state.status === "ready" && (
         <Flex direction="column" gap={5} maxW="1080px">
+          <ScreenUpload params={params!} cfg={cfg!} threshold={state.scored.threshold} />
           <ScreenOne scored={state.scored} />
           <ScreenWindow scored={state.scored} />
         </Flex>

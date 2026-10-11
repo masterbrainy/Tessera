@@ -22,6 +22,8 @@ export interface RawDataset {
   tasks: string[];
   features: string[];
   nBins: number;
+  /** Quantile bin edges per feature, so raw values from an uploaded CSV bin the same way. */
+  edges?: number[][];
   rows: number;
   bins: string;
   labels: string;
@@ -58,6 +60,30 @@ export function parseDataset(raw: RawDataset): Dataset {
     step: fromBase64(raw.step),
     txId: new Uint32Array(txBytes.buffer, txBytes.byteOffset, raw.rows),
     size: raw.rows,
+  };
+}
+
+/** A member's private rows (uint8 bin per feature, row-major) as a Dataset the model can train on. */
+export function datasetFromBins(bins: Uint8Array, labels: Int8Array, features: string[], nBins: number): Dataset {
+  const F = features.length;
+  const rows = labels.length;
+  const fp = Array.from({ length: rows }, (_, r) => {
+    const bits = new Uint16Array(F);
+    for (let f = 0; f < F; f++) bits[f] = f * nBins + bins[r * F + f];
+    return bits;
+  });
+  return {
+    name: "private",
+    tasks: ["illicit"],
+    features,
+    nBins,
+    nBits: F * nBins,
+    fp,
+    labels,
+    split: new Uint8Array(rows),
+    step: new Uint8Array(rows),
+    txId: new Uint32Array(rows),
+    size: rows,
   };
 }
 

@@ -1,12 +1,13 @@
 import mark from "../assets/tessera.svg";
 import { DEPLOYMENT } from "../chain/ledger";
 
-export type View = "consortium" | "ledger" | "screen";
+export type View = "build" | "consortium" | "ledger" | "screen";
 
 const LINKS: [View | "how", string][] = [
-  ["consortium", "Consortium"],
+  ["build", "Data market"],
+  ["consortium", "Benchmark"],
   ["ledger", "Ledger"],
-  ["screen", "Screen a transaction"],
+  ["screen", "Use the model"],
   ["how", "How it works"],
 ];
 
@@ -14,7 +15,7 @@ export default function TopBar({ view, onView, onHow }: { view: View; onView: (v
   const live = !!DEPLOYMENT.ledger;
   return (
     <header className="topbar">
-      <a className="brand" href="#main" aria-label="Tessera home" onClick={() => onView("consortium")}>
+      <a className="brand" href="#main" aria-label="Tessera home" onClick={() => onView("build")}>
         <img src={mark} alt="" width="32" height="32" />
         <span>Tessera</span>
       </a>

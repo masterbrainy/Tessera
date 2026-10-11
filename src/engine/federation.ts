@@ -22,6 +22,8 @@ export interface RunConfig {
   trimFrac: number;
   /** Drop updates the screening step flags before aggregating. */
   filterAnomalies: boolean;
+  /** Screening cosine threshold (default 0.1). Live rooms with few members use a stricter one. */
+  screenCos?: number;
   attacks: { lab: number; type: AttackType }[];
   dp: DpConfig;
 }
@@ -182,7 +184,7 @@ export function coordinate(
   updates: readonly LabUpdate[],
 ): { next: Float64Array; result: Omit<RoundResult, "ms"> } {
   const { cfg, part } = ctx;
-  const screening = screen(updates);
+  const screening = screen(updates, cfg.screenCos ?? 0.1);
   const acceptedMask = updates.reduce(
     (m, _, i) => (cfg.filterAnomalies && screening[i].flagged ? m : m | (1 << i)),
     0,

@@ -19,6 +19,8 @@ export function rejectedRounds(snap: Snapshot, lab: number) {
 }
 
 function Curves({ snap }: { snap: Snapshot }) {
+  const shown = snap.members.map((m, lab) => ({ m, lab })).filter(({ lab }) => !rejectedRounds(snap, lab));
+  const hidden = snap.members.map((m, lab) => ({ m, lab })).filter(({ lab }) => rejectedRounds(snap, lab) > 0);
   const data = Array.from({ length: snap.totalRounds }, (_, r) => {
     const row: Record<string, number | undefined> = { round: r + 1, consortium: snap.results[r]?.catchRate };
     snap.members.forEach((m) => (row[m.id] = snap.solo[m.id]?.[r]));
@@ -36,14 +38,19 @@ function Curves({ snap }: { snap: Snapshot }) {
             <YAxis tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} tick={{ fontSize: 11, fill: "#8a7663" }} stroke="#eadccb" domain={["auto", "auto"]} width={48} />
             <Tooltip formatter={(v) => pct(Number(v))} contentStyle={{ borderRadius: 12, border: "1px solid #eadccb", fontSize: 12 }} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
-            {snap.members.map((m, lab) => (
+            {shown.map(({ m, lab }) => (
               <Line key={m.id} type="monotone" dataKey={m.id} name={`${m.name} alone`}
-                stroke={colorOf(lab, rejectedRounds(snap, lab) > 0)} strokeWidth={1.5} dot={false} isAnimationActive={false} />
+                stroke={colorOf(lab)} strokeWidth={1.5} dot={false} isAnimationActive={false} />
             ))}
             <Line type="monotone" dataKey="consortium" name="Shared consortium model" stroke="#d9703a" strokeWidth={3.5} dot={{ r: 3 }} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </Box>
+      {hidden.map(({ m }) => (
+        <Text key={m.id} fontSize="12px" color="#c2410c" mt={2}>
+          {m.name} alone: {pct(snap.solo[m.id]?.at(-1) ?? 0)}. Its labels are wrong, so a model trained on them learns the opposite (left off the chart).
+        </Text>
+      ))}
     </>
   );
 }

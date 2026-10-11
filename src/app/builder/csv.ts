@@ -61,11 +61,13 @@ export function parseCsv(text: string, schema: Schema, fileName: string, require
   const featCols = schema.features.map((f) => col.get(f.toLowerCase())!);
   const labelCol = LABEL_COLUMNS.map((c) => col.get(c)).find((i) => i !== undefined);
   const idCol = ID_COLUMNS.map((c) => col.get(c)).find((i) => i !== undefined);
+  const stepCol = col.get("time_step");
   const F = schema.features.length;
   const rows = lines.length - 1;
   const bins = new Uint8Array(rows * F);
   const labels = new Int8Array(rows).fill(-1);
   const txIds: string[] = new Array(rows);
+  const steps = stepCol === undefined ? null : new Uint8Array(rows);
   let labeled = 0;
   for (let r = 0; r < rows; r++) {
     const cells = lines[r + 1].split(",");
@@ -77,10 +79,11 @@ export function parseCsv(text: string, schema: Schema, fileName: string, require
     const y = labelCol === undefined ? -1 : parseLabel(cells[labelCol]);
     labels[r] = y;
     if (y >= 0) labeled++;
+    if (steps) steps[r] = Number(cells[stepCol!]) || 0;
     txIds[r] = idCol === undefined ? String(r + 1) : (cells[idCol] ?? "").trim();
   }
   if (!labeled && requireLabels) throw new Error("No labeled rows: add an is_illicit column (1 = illicit, 0 = licit) so this data can teach the model.");
-  return { source: "uploaded", fileName, bins, cleanLabels: labels, txIds, steps: null, rows };
+  return { source: "uploaded", fileName, bins, cleanLabels: labels, txIds, steps, rows };
 }
 
 export async function fetchSample(name: string, schema: Schema): Promise<ExchangeData> {

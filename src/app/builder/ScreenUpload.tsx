@@ -8,6 +8,9 @@ import { predict } from "../../engine/model";
 import { download, loadSchema, parseCsv, SAMPLE_BASE } from "./csv";
 import { pct } from "../palette";
 
+/** Probabilities near 1 all round to 100%; say so instead of showing identical numbers. */
+const prob = (p: number) => (p >= 0.9999 ? "> 99.99%" : p < 0.0001 ? "< 0.01%" : pct(p, 2));
+
 interface Screened {
   fileName: string;
   rows: { txId: string; score: number; alert: boolean }[];
@@ -64,12 +67,13 @@ export default function ScreenUpload({ params, cfg, threshold }: { params: Float
             {out.rows.length.toLocaleString()} transactions screened from {out.fileName}: <span style={{ color: "#c2410c" }}>{out.alerts} alerts</span> ({pct(out.alerts / out.rows.length)})
           </Text>
           <Box as="table" w="100%" mt={2} fontSize="13px" style={{ borderCollapse: "collapse" }}>
-            <thead><tr style={{ color: "var(--muted)", textAlign: "left" }}><th>tx_id</th><th>risk score</th><th>decision</th></tr></thead>
+            <thead><tr style={{ color: "var(--muted)", textAlign: "left" }}><th>rank</th><th>tx_id</th><th>model probability</th><th>decision</th></tr></thead>
             <tbody>
-              {out.rows.slice(0, 8).map((r) => (
+              {out.rows.slice(0, 8).map((r, i) => (
                 <tr key={r.txId} style={{ borderTop: "1px solid var(--line)" }}>
-                  <td style={{ padding: "4px 0" }}><code>{r.txId}</code></td>
-                  <td>{pct(r.score, 2)}</td>
+                  <td style={{ padding: "4px 0", color: "var(--muted)" }}>#{i + 1}</td>
+                  <td><code>{r.txId}</code></td>
+                  <td>{prob(r.score)}</td>
                   <td style={{ color: r.alert ? "#c2410c" : "var(--green)", fontWeight: 650 }}>{r.alert ? "Alert: review" : "Clear"}</td>
                 </tr>
               ))}
@@ -77,7 +81,7 @@ export default function ScreenUpload({ params, cfg, threshold }: { params: Float
           </Box>
           <Button size="small" sx={{ mt: 2, textTransform: "none" }}
             onClick={() => download(`alerts-${out.fileName}`, ["tx_id,risk_score,alert", ...out.rows.map((r) => `${r.txId},${r.score.toFixed(5)},${r.alert ? 1 : 0}`)].join("\n"))}>
-            Download all {out.rows.length.toLocaleString()} scores (CSV)
+            Download all {out.rows.length.toLocaleString()} scores, ranked (CSV)
           </Button>
         </Box>
       )}

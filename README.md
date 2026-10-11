@@ -95,7 +95,7 @@ src/engine/      pure TypeScript, identical in Node and every browser
   hash.ts        keccak model fingerprints, canonical config JSON
 src/workers/     one Web Worker per exchange (benchmark + data-market providers) + coordinator + baselines + replay
 src/app/builder/ data market: exchange data generator, CSV upload + binning, run loop, payouts, screen-your-own CSV
-src/app/         React UI (Chakra + MUI + framer-motion), design system from our earlier project Bloom
+src/app/         React UI (Chakra + MUI + framer-motion): 3D isometric skyline (Skyline.jsx), design system from our earlier project Bloom
 src/chain/       viem client for TesseraLedger, generated ABI, deployment
 contracts/       TesseraLedger.sol (BSC run ledger) + TesseraPayouts.sol (AUSD settlement on Ethereum Sepolia)
 node/            lab-server (per-exchange HTTP node), coordinator CLI, deploy, experiments

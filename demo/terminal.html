@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Tessera node</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf6ee;--ink:#2b2118;--muted:#8a7663;--accent:#d9703a;--line:#eadccb}
+html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% 38%,#fff3dc 0%,var(--bg) 70%);font-family:Inter,sans-serif}
+.wrap{display:flex;align-items:center;justify-content:flex-start;height:100%;flex-direction:column;gap:18px;padding-top:40px;box-sizing:border-box}
+.title{font-size:15px;letter-spacing:.14em;font-weight:700;color:var(--muted)}
+.win{width:1180px;height:560px;background:#221a14;border-radius:18px;box-shadow:0 30px 80px rgba(80,50,20,.28);overflow:hidden;display:flex;flex-direction:column}
+.bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 18px;background:#2e241c;color:#bba78f;font:600 13px 'JetBrains Mono',monospace}
+.dot{width:12px;height:12px;border-radius:50%}
+.body{flex:1;padding:22px 26px;font:400 15.5px/1.62 'JetBrains Mono',monospace;color:#e9dccb;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.l{white-space:pre;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .25s}
+.l.on{opacity:1;transform:none}
+.node{color:#9cc489}.conn{color:#8bb8e8}.round{color:#fde68a}.rej{color:#f0a07c}.pay{color:#fff;font-weight:600}.tx{color:#f2c46d}.ok{color:#9cc489;font-weight:600}
+.prompt{color:#d9703a}
+</style></head><body><div class="wrap"><div class="title">REAL NETWORK MODE · ONE PROCESS PER EXCHANGE</div>
+<div class="win"><div class="bar"><span class="dot" style="background:#e8799a"></span><span class="dot" style="background:#f2c46d"></span><span class="dot" style="background:#9cc489"></span><span style="margin-left:14px">coordinator — npx tsx node/coordinator.ts --spawn --submit</span></div>
+<div class="body" id="b"></div></div></div>
+<script>
+const LINES=["[Kestrel] lab node 2 listening on :7102 with 2867 private transactions", "[Meridian] lab node 1 listening on :7101 with 4383 private transactions", "[Harbor] lab node 0 listening on :7100 with 6488 private transactions", "[Atlas] lab node 3 listening on :7103 with 8316 private transactions", "[Lumen] lab node 4 listening on :7104 with 4851 private transactions", "connected Harbor (6488 tx) at http://localhost:7100", "connected Meridian (4383 tx) at http://localhost:7101", "connected Kestrel (2867 tx) at http://localhost:7102", "connected Atlas (8316 tx) at http://localhost:7103", "connected Lumen (4851 tx) at http://localhost:7104", "[Kestrel] round 0: trained on 2867 private tx in 178ms", "[Meridian] round 0: trained on 4383 private tx in 233ms", "[Lumen] round 0: trained on 4851 private tx in 244ms", "[Harbor] round 0: trained on 6488 private tx in 301ms", "[Atlas] round 0: trained on 8316 private tx in 320ms", "round 0: AUC 0.8928, catches 66.6% of illicit @1% FPR, rejected Lumen | model 0x2acc8def\u2026", "round 1: AUC 0.9051, catches 67.7% of illicit @1% FPR, rejected Lumen | model 0xe0c47465\u2026", "round 2: AUC 0.9098, catches 67.8% of illicit @1% FPR, rejected Lumen | model 0x17b696a6\u2026", "round 3: AUC 0.9129, catches 68.1% of illicit @1% FPR, rejected Lumen | model 0x43e54f4d\u2026", "round 4: AUC 0.9152, catches 68.2% of illicit @1% FPR, rejected Lumen | model 0xb4e7e631\u2026", "round 5: AUC 0.9151, catches 68.8% of illicit @1% FPR, rejected Lumen | model 0x23bf2874\u2026", "round 6: AUC 0.9147, catches 70.0% of illicit @1% FPR, rejected Lumen | model 0x8e0bed48\u2026", "round 7: AUC 0.9153, catches 70.1% of illicit @1% FPR, rejected Lumen | model 0xaa630fc2\u2026", "round 8: AUC 0.9158, catches 70.0% of illicit @1% FPR, rejected Lumen | model 0xd50d8fd3\u2026", "round 9: AUC 0.9154, catches 70.3% of illicit @1% FPR, rejected Lumen | model 0x0451f9b6\u2026", "payouts: Harbor 29.6%, Meridian 38.1%, Kestrel 28.3%, Atlas 4.0%, Lumen 0.0%", "submitted https://testnet.bscscan.com/tx/0x52b64909a3b6a3286d9ad9cb5831d819ce1ea31ba07acafc093f057fc7888c00", "confirmed in block 136237824 (success)"];
+const b=document.getElementById('b');
+function cls(l){if(l.includes('listening'))return'node';if(l.startsWith('connected'))return'conn';if(l.startsWith('[')) return 'node';if(l.startsWith('round'))return'round';if(l.startsWith('payouts'))return'pay';if(l.startsWith('submitted'))return'tx';if(l.startsWith('confirmed'))return'ok';return''}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function fmt(l){let h=esc(l);h=h.replace(/rejected (\w+)/,'<span class="rej">rejected $1</span>');return h}
+window.play=async(speed=1)=>{const p=document.createElement('div');p.className='l on';p.innerHTML='<span class="prompt">$</span> npx tsx node/coordinator.ts --spawn --submit';b.appendChild(p);
+await new Promise(r=>setTimeout(r,700/speed));
+for(const l of LINES){const d=document.createElement('div');d.className='l '+cls(l);d.innerHTML=fmt(l);b.appendChild(d);requestAnimationFrame(()=>d.classList.add('on'));
+const w=l.startsWith('round')?420:l.startsWith('submitted')?900:l.startsWith('payouts')?700:150;await new Promise(r=>setTimeout(r,w/speed));
+while(b.scrollHeight>b.clientHeight&&b.children.length>1)b.removeChild(b.firstChild);}};
+</script></body></html>

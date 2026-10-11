@@ -8,3 +8,6 @@ data/raw
 artifacts
 cache
 .claude/
+demo/build/
+demo/*.mp4
+demo/*.mov

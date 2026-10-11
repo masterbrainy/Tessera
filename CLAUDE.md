@@ -51,10 +51,13 @@ Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alar
 GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Public repo under `masterbrainy`.
 
 ## Status (update as you go)
-- DONE: data, engine, distributed HTTP mode (verified deterministic vs in-process), contract + compile, deploy script, workers, `useFederation` hook
-- IN PROGRESS (main session): bloom-style UI: App shell, Garden, scenario controls, results/charts, Ledger page (+ replay verify), Screen-a-transaction page
-- BLOCKED: contract deploy needs tBNB from the user
-- TODO: tests (determinism, Shapley efficiency), README, GitHub Pages deploy, demo video script, submission text
+- LIVE: https://masterbrainy.github.io/Tessera/ (GitHub Actions deploys on every push to main; runs `pnpm test` + `pnpm build`)
+- REPO: https://github.com/masterbrainy/Tessera (public)
+- DONE: data, engine, distributed HTTP mode, contract + compile, deploy script, workers, full bloom-style UI (garden, scenario, results, payouts, commit card, exchange dialog, how-it-works, ledger + replay verify, screen-a-transaction), 7 vitest tests, README
+- VERIFIED: browser and Node produce the same final model hash for the default config (0x0451f9b6…)
+- BLOCKED: contract deploy needs ~0.01 tBNB on the deployer (0x6bc4047aFC6D9aFf13f3e51627CB35075fa7ddc1)
+- TODO after funding: `pnpm deploy`, commit 2–3 reference runs via `node/coordinator.ts --spawn --submit` (defended, undefended FedAvg, DP), push deployment.json
+- TODO: demo video, submission text (Plan & Pivot session)
 
 ## Parallel sessions: coordination rules
 - **Main build session** owns: `src/app/**`, `src/workers/**`, `src/chain/**`, `node/**`, `contracts/**`.

@@ -25,7 +25,7 @@ const muiTheme = createTheme({
     background: { default: "#fbf6ee", paper: "#fffdf9" },
   },
   shape: { borderRadius: 14 },
-  typography: { fontFamily: "var(--font)" },
+  typography: { fontFamily: "var(--font)", button: { textTransform: "none", fontWeight: 650 } },
 });
 
 createRoot(document.getElementById("root")!).render(

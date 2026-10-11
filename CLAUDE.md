@@ -1,0 +1,71 @@
+# Tessera: shared context for every Claude session on this repo
+
+Hackathon: B@BHacks 2.0 (Blockchain at Berkeley). Deadline is ~4h from 2026-10-11 13:40 local.
+Tracks: **Most Technically Impressive** (general) + **YZi Labs** sponsor track ("solves a real
+bottleneck, team could keep building it"; Binance-affiliated). Judges are finance/startup/blockchain
+people, so the framing is **finance**, not medical.
+
+## Pitch
+Crypto exchanges / VASPs each see only a slice of illicit flow (scam waves cash out through
+different venues), but can't share customer transaction data (privacy, competition, regulation).
+Tessera lets them train one anti-money-laundering model together: only weight updates leave each
+exchange. The coordinator screens out poisoned updates, prices every exchange's contribution with
+exact Shapley values, and commits the run onchain (BSC testnet). A reward pool in cUSD is paid
+pro rata to contribution. Training is bit-for-bit deterministic, so anyone can replay a committed
+run in their browser and verify every round's model hash: payouts are auditable, not trusted.
+
+## Data
+Elliptic Bitcoin dataset (real tx, 46,564 labeled illicit/licit, 49 time steps).
+`scripts/preprocess.py` → `public/data/elliptic.json` (64 most informative features, 8 quantile bins
+each → 512 sparse input bits). Temporal split: steps 1–30 spread across exchanges, 31–34 consortium
+validation window (used only for Shapley scoring), 35–49 future test window (all reported metrics).
+Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alarm rate; plus ROC-AUC.
+
+## Measured results (default config, seed 7, 5 exchanges, 10 rounds)
+- Consortium: AUC 0.915, catch rate 70.3% (attacker present but filtered); 0.9175 / 69.9% with no attacker
+- Each exchange alone: catch rate 63.8–67.2%; pooling all raw data (privacy-violating ceiling): 70.1%
+- One poisoning exchange with plain FedAvg (no defense): catch rate collapses to 40%, AUC 0.79
+- With defense (median-referenced cosine screening + trimmed mean): attacker flagged every round, payout 0
+
+## Architecture
+- `src/engine/` pure TS, runs identically in Node and browsers (no DOM).
+  - `detmath.ts` deterministic exp/log (Math.exp/log/pow are NOT bit-exact across engines; never use them on the weight path)
+  - `rng.ts` xoshiro128** + polar gaussian; `data.ts` dataset parse + `EXCHANGES` profiles + non-IID partition
+  - `model.ts` sparse multi-task MLP + Adam; `aggregate.ts` fedavg/trimmed/median + screening
+  - `shapley.ts` exact Shapley over all 2^n coalitions; `privacy.ts` optional client DP + RDP epsilon
+  - `federation.ts` RunConfig, `labUpdate` (what an exchange does), `coordinate` (one round), `runFederation`, baselines, payouts
+  - `hash.ts` keccak of params (float64 LE) + canonical JSON
+- `src/workers/` Web Workers: one per exchange (`lab.worker`), `coordinator.worker`, `baseline.worker` (solo + pooled curves), `replay.worker` (verification)
+- `src/app/` React UI ported from github.com/visheshv5/bloom (Chakra v2 + MUI v6 + framer-motion, warm "garden" palette, Inter). Exchanges = flowers, coordinator = sunflower hub.
+- `src/chain/` `abi.ts` (generated), `ledger.ts` (commit/fetch runs, keyless deterministic exchange payout addresses), `deployment.json`
+- `contracts/TesseraLedger.sol` ledger + `ConsortiumUSD` (cUSD) reward token. `pnpm compile` (solc-js) regenerates `src/chain/abi.ts`.
+- `node/` real distributed mode: `lab-server.ts` (one HTTP process per exchange), `coordinator.ts --spawn [--submit]`, `chain/deploy.ts`, `experiment.ts` (tuning sweeps)
+
+## Commands
+- `pnpm dev` / `pnpm build` (Vite, base `/tessera/` for GitHub Pages)
+- `npx tsx node/experiment.ts '{"aggregator":"fedavg","filterAnomalies":false}' baselines`
+- `npx tsx node/coordinator.ts --spawn --config '{"rounds":3}' [--submit]`
+- `pnpm compile && pnpm deploy` (needs tBNB on the deployer in `.env`, address 0x6bc4047aFC6D9aFf13f3e51627CB35075fa7ddc1)
+
+## Deploy target
+GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Public repo under `masterbrainy`.
+
+## Status (update as you go)
+- DONE: data, engine, distributed HTTP mode (verified deterministic vs in-process), contract + compile, deploy script, workers, `useFederation` hook
+- IN PROGRESS (main session): bloom-style UI: App shell, Garden, scenario controls, results/charts, Ledger page (+ replay verify), Screen-a-transaction page
+- BLOCKED: contract deploy needs tBNB from the user
+- TODO: tests (determinism, Shapley efficiency), README, GitHub Pages deploy, demo video script, submission text
+
+## Parallel sessions: coordination rules
+- **Main build session** owns: `src/app/**`, `src/workers/**`, `src/chain/**`, `node/**`, `contracts/**`.
+- **Side plan/pivot session** owns: `docs/**` (pitch, demo script, submission copy, judging strategy), and may
+  edit anything else after messaging the main session first. Work on your own branch; the main session merges.
+- Record any decision that changes framing, scope, or architecture in **Decisions log** below and message the
+  other session (use `ListAgents` to find it, then `SendMessage`).
+- Engine determinism is load-bearing (onchain verification). Don't add `Math.exp/log/pow/sin` on the weight path.
+
+## Decisions log
+- 2026-10-11: Track = Most Technically Impressive + YZi Labs. Chain = BSC testnet.
+- 2026-10-11: Pivoted domain from drug discovery (Tox21) to finance/AML (Elliptic) because judges are finance/blockchain.
+- 2026-10-11: UI copies bloom's design system exactly (user request).
+- 2026-10-11: Static deploy (GitHub Pages); all training runs client-side in Web Workers, plus Node distributed mode for the "real network" story.

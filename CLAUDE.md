@@ -82,3 +82,4 @@ GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Pu
 - 2026-10-11: UI copies bloom's design system exactly (user request).
 - 2026-10-11: Pitch = data market (paid for private data's worth, without sharing); AML is market #1. UI default tab = Data market builder.
 - 2026-10-11: Static deploy (GitHub Pages); all training runs client-side in Web Workers, plus Node distributed mode for the "real network" story.
+- 2026-10-11: Payouts settle in real Agora AUSD on Base Sepolia (AUSD isn't on BSC). Hybrid: BSC testnet stays the verification ledger; `TesseraPayouts` (Base Sepolia) is a funded pool (`fund`), and coordinator-only `settle(bscRunId, finalModelHash, amount, labs, bps)` pays each committed BSC run once. Script: `npx tsx node/chain/settle-ausd.ts` (coordinator wallet = PAYOUT_KEY in .env, 0x363914B66e9DfD2EeC2f45F6395DB726ee0E8c76).

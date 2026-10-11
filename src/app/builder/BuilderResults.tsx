@@ -67,7 +67,7 @@ function Payouts({ snap }: { snap: Snapshot }) {
       <Text fontSize="13px" color="var(--ink-2)" mt={1} lineHeight={1.6}>
         Each round the coordinator rebuilds the model from every subset of providers ({1 << snap.members.length} coalitions) and measures what
         each one adds on a shared validation window (exact Shapley values). A {POOL_AUSD.toLocaleString()} AUSD pool is split in proportion.
-        Updates that disagree with the consortium are rejected and earn 0. Payouts here are simulated; committed benchmark runs are paid in real AUSD (see Ledger).
+        Updates that disagree with the consortium are rejected and earn 0. Below, a sponsor can pay these shares out in real AUSD, including to exchanges without a wallet.
       </Text>
       <Box mt={3}>
         {snap.members.map((m, lab) => {

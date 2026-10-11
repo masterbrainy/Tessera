@@ -1,0 +1,13 @@
+{
+  "chainId": 11155111,
+  "payouts": "0xd7ddbbd3468821878bdf5fe2f39e5b9820bf7f89",
+  "ausd": "0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC",
+  "explorer": "https://sepolia.etherscan.io",
+  "deployBlock": 11894851,
+  "amountPerRun": "1000",
+  "settlements": {
+    "0": "0x03306ad666afd5128340e2bbcd5ee1f87a4aa86170a59329d6f17dc783da2241",
+    "1": "0xc6e5768a0239586062a0a914d86bca0b33e997b29e123c726430185998ed91fc",
+    "2": "0x7dd513999832b38a4a47835aaab975d583272134e28e16a2ef8ea7dd5055249b"
+  }
+}

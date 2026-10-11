@@ -1,12 +1,12 @@
-// Settle committed BSC testnet runs in real AUSD on Base Sepolia.
+// Settle committed BSC testnet runs in real AUSD on an Agora testnet (default: Ethereum Sepolia).
 // Idempotent: deploys TesseraPayouts once, tops up AUSD from Agora's testnet faucet, funds the pool,
 // then pays every BSC run that isn't settled yet, using that run's onchain payout split.
-// Usage: npx tsx node/chain/settle-ausd.ts [--amount 1000]
+// Usage: npx tsx node/chain/settle-ausd.ts [--chain sepolia|base-sepolia] [--amount 1000]
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createPublicClient, createWalletClient, erc20Abi, formatEther, formatUnits, http, parseUnits, type Address, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, sepolia } from "viem/chains";
 import { payoutsAbi, payoutsBytecode } from "../../src/chain/payoutsAbi";
 import { fetchRuns, publicClient as bscClient } from "../../src/chain/ledger";
 import { loadEnv } from "../env";
@@ -19,7 +19,18 @@ const faucetAbi = [
   { type: "function", name: "requestFunds", stateMutability: "nonpayable", inputs: [{ name: "to", type: "address" }], outputs: [] },
 ] as const;
 
-const EXPLORER = "https://sepolia.basescan.org";
+const NETWORKS = {
+  sepolia: { chain: sepolia, rpc: "https://ethereum-sepolia-rpc.publicnode.com", explorer: "https://sepolia.etherscan.io" },
+  "base-sepolia": { chain: baseSepolia, rpc: "https://sepolia.base.org", explorer: "https://sepolia.basescan.org" },
+} as const;
+const arg = (name: string) => {
+  const i = process.argv.indexOf(name);
+  return i > 0 ? process.argv[i + 1] : undefined;
+};
+const networkName = (arg("--chain") ?? "sepolia") as keyof typeof NETWORKS;
+const NETWORK = NETWORKS[networkName];
+if (!NETWORK) throw new Error(`unknown --chain ${networkName}; use ${Object.keys(NETWORKS).join(" or ")}`);
+const EXPLORER = NETWORK.explorer;
 const OUT = fileURLToPath(new URL("../../src/chain/payouts.json", import.meta.url));
 
 interface PayoutsFile {
@@ -32,23 +43,22 @@ interface PayoutsFile {
   settlements: Record<string, Hex>;
 }
 
-const amountArg = process.argv.indexOf("--amount");
-const amountPerRun = parseUnits(amountArg > 0 ? process.argv[amountArg + 1] : "1000", AUSD_DECIMALS);
+const amountPerRun = parseUnits(arg("--amount") ?? "1000", AUSD_DECIMALS);
 
-// The Base Sepolia coordinator is its own wallet (PAYOUT_KEY in .env); falls back to the BSC deployer key.
+// The payout-chain coordinator is its own wallet (PAYOUT_KEY in .env); falls back to the BSC deployer key.
 function payoutKey(): Hex {
   const file = fileURLToPath(new URL("../../.env", import.meta.url));
   const fromFile = existsSync(file) ? readFileSync(file, "utf8").match(/^PAYOUT_KEY=(0x[0-9a-fA-F]{64})$/m)?.[1] : undefined;
   return (process.env.PAYOUT_KEY ?? fromFile ?? loadEnv().DEPLOYER_KEY) as Hex;
 }
 const account = privateKeyToAccount(payoutKey());
-const transport = http(process.env.BASE_RPC_URL ?? "https://sepolia.base.org");
-const pub = createPublicClient({ chain: baseSepolia, transport });
-const wallet = createWalletClient({ account, chain: baseSepolia, transport });
+const transport = http(process.env.PAYOUT_RPC_URL ?? NETWORK.rpc);
+const pub = createPublicClient({ chain: NETWORK.chain, transport });
+const wallet = createWalletClient({ account, chain: NETWORK.chain, transport });
 
 const state: PayoutsFile = existsSync(OUT)
   ? JSON.parse(readFileSync(OUT, "utf8"))
-  : { chainId: baseSepolia.id, payouts: null, ausd: AUSD, explorer: EXPLORER, deployBlock: 0, amountPerRun: "", settlements: {} };
+  : { chainId: NETWORK.chain.id, payouts: null, ausd: AUSD, explorer: EXPLORER, deployBlock: 0, amountPerRun: "", settlements: {} };
 const save = () => writeFileSync(OUT, JSON.stringify({ ...state, amountPerRun: formatUnits(amountPerRun, AUSD_DECIMALS) }, null, 2) + "\n");
 
 async function send(label: string, hash: Hex) {
@@ -59,8 +69,8 @@ async function send(label: string, hash: Hex) {
 }
 
 const eth = await pub.getBalance({ address: account.address });
-console.log(`deployer ${account.address} on Base Sepolia: ${formatEther(eth)} ETH`);
-if (eth === 0n) throw new Error("deployer has no Base Sepolia ETH for gas: fund it from a Base Sepolia faucet first");
+console.log(`deployer ${account.address} on ${NETWORK.chain.name}: ${formatEther(eth)} ETH`);
+if (eth === 0n) throw new Error(`payout wallet has no ${NETWORK.chain.name} ETH for gas: fund it from a faucet first`);
 
 // 1. Deploy the payout pool once.
 if (!state.payouts) {

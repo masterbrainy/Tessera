@@ -111,6 +111,8 @@ liability, it records every run on BNB Chain, and the engine extends to every ma
 ## Honest scope (say it before a judge asks)
 - The 5 exchanges are simulated from one public dataset (real labeled Bitcoin transactions, split unevenly).
 - The AUSD pool is funded from Agora's testnet faucet, not by model-user fees yet.
+- The BSC ledger also mints a cUSD token as an onchain record of each split (Benchmark tab). The real payouts are
+  the AUSD settlements on Ethereum Sepolia.
 - Payouts on the Data market tab are computed in the browser; the onchain commitments and replay are on the
   Benchmark tab.
 - Anyone can call `commitRun` today. Replay exposes a bad run, but nothing blocks it from being posted.

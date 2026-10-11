@@ -4,8 +4,8 @@ import { Button, Chip, LinearProgress } from "@mui/material";
 import { motion } from "framer-motion";
 import { EXCHANGES } from "../engine/data";
 import type { RunConfig } from "../engine/federation";
-import PAYOUTS from "../chain/payouts.json";
-import { DEPLOYMENT, EXPLORER, exchangeAddress, fetchEarnings, fetchRuns, publicClient, type OnchainRun } from "../chain/ledger";
+import { DEPLOYMENT, EXPLORER, exchangeAddress, fetchRuns, publicClient, type OnchainRun } from "../chain/ledger";
+import { fetchAusdEarnings, formatAusd, PAYOUTS } from "../chain/payouts";
 import type { ReplayIn, ReplayOut } from "../workers/protocol";
 import { DATA_URL } from "./useFederation";
 import { colorOf, pct, short } from "./palette";
@@ -14,7 +14,6 @@ const POLL_MS = 20_000;
 const RUN_LIMIT = 12;
 const DEFAULT_LABS = 5;
 const SHAPLEY_TOLERANCE = 1e-9;
-const EARNINGS_DECIMALS = 18n;
 
 const eyebrow = { fontSize: "11px", letterSpacing: ".12em", fontWeight: 700, color: "var(--muted)" } as const;
 const panelProps = { p: 6, borderRadius: "16px", bg: "var(--panel)", border: "1px solid var(--line)" } as const;
@@ -28,11 +27,6 @@ function relativeTime(unixSeconds: number): string {
   if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} h ago`;
   return `${Math.floor(diff / 86400)} d ago`;
-}
-
-function formatCusd(wei: bigint): string {
-  const whole = Number(wei / 10n ** EARNINGS_DECIMALS);
-  return `${whole.toLocaleString()} cUSD`;
 }
 
 const attackerLabs = (cfg: RunConfig): Set<number> => new Set(cfg.attacks.map((a) => a.lab));
@@ -63,7 +57,7 @@ function useLedgerData(): LedgerData {
         const client = publicClient();
         const fetched = await fetchRuns(client, RUN_LIMIT);
         const labs = Math.max(DEFAULT_LABS, ...fetched.map((r) => r.config.numLabs));
-        const earned = await fetchEarnings(client, labs);
+        const earned = await fetchAusdEarnings(labs);
         if (cancelled) return;
         setRuns([...fetched].sort((a, b) => b.runId - a.runId));
         setEarnings(earned);
@@ -344,7 +338,7 @@ function EarningsPanel({ earnings }: { earnings: bigint[] }) {
   return (
     <Box {...panelProps}>
       <Text {...eyebrow}>EXCHANGE EARNINGS</Text>
-      <Text mt={1} mb={4} fontSize="14px" color="var(--ink-2)">Total cUSD each exchange has earned across every committed run.</Text>
+      <Text mt={1} mb={4} fontSize="14px" color="var(--ink-2)">Real AUSD each exchange has been paid on Ethereum Sepolia, across every settled run.</Text>
       <Flex direction="column" gap={4}>
         {rows.map(({ wei, lab }) => {
           const addr = exchangeAddress(lab);
@@ -357,12 +351,12 @@ function EarningsPanel({ earnings }: { earnings: bigint[] }) {
                   <Text fontSize="14px" fontWeight={600} color="var(--ink)">{labName(lab)}</Text>
                   <Text fontSize="12px" color="var(--muted)">{EXCHANGES[lab]?.kind}</Text>
                 </Flex>
-                <Text fontSize="14px" fontWeight={600} color="var(--ink)">{formatCusd(wei)}</Text>
+                <Text fontSize="14px" fontWeight={600} color="var(--ink)">{formatAusd(wei)}</Text>
               </Flex>
               <Box mt={2} h="8px" borderRadius="4px" bg="var(--panel-2)" overflow="hidden">
                 <Box h="100%" w={`${width}%`} bg={colorOf(lab)} borderRadius="4px" transition="width .4s" />
               </Box>
-              <Link href={`${EXPLORER}/address/${addr}`} isExternal fontSize="11px" color="var(--muted)">{short(addr)}</Link>
+              <Link href={`${PAYOUTS.explorer}/address/${addr}`} isExternal fontSize="11px" color="var(--muted)">{short(addr)}</Link>
             </Box>
           );
         })}

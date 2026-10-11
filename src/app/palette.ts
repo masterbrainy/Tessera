@@ -27,4 +27,4 @@ export function colorOf(lab: number, attacker = false): string {
 
 export const pct = (x: number, digits = 1) => (Number.isFinite(x) ? `${(100 * x).toFixed(digits)}%` : "—");
 export const short = (h: string) => `${h.slice(0, 6)}…${h.slice(-4)}`;
-export const usd = (bps: number) => `${((bps / 10000) * 10000).toLocaleString(undefined, { maximumFractionDigits: 0 })} cUSD`;
+export const usd = (bps: number) => `${((bps / 10000) * 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} AUSD`;

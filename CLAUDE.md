@@ -15,7 +15,7 @@ Original AML framing, still accurate for the first market: Crypto exchanges / VA
 different venues), but can't share customer transaction data (privacy, competition, regulation).
 Tessera lets them train one anti-money-laundering model together: only weight updates leave each
 exchange. The coordinator screens out poisoned updates, prices every exchange's contribution with
-exact Shapley values, and commits the run onchain (BSC testnet). A reward pool in cUSD is paid
+exact Shapley values, and commits the run onchain (BSC testnet). A reward pool in AUSD is paid
 pro rata to contribution. Training is bit-for-bit deterministic, so anyone can replay a committed
 run in their browser and verify every round's model hash: payouts are auditable, not trusted.
 
@@ -83,3 +83,4 @@ GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Pu
 - 2026-10-11: Pitch = data market (paid for private data's worth, without sharing); AML is market #1. UI default tab = Data market builder.
 - 2026-10-11: Static deploy (GitHub Pages); all training runs client-side in Web Workers, plus Node distributed mode for the "real network" story.
 - 2026-10-11: Payouts settle in real Agora AUSD on **Ethereum Sepolia** (AUSD isn't on BSC). Hybrid: BSC testnet stays the verification ledger; `TesseraPayouts` 0xd7ddbbd3468821878bdf5fe2f39e5b9820bf7f89 (Sepolia) is a funded pool (`fund`), and coordinator-only `settle(bscRunId, finalModelHash, amount, labs, bps)` pays each committed BSC run once. BSC runs #0–#2 settled at 1,000 AUSD each (addresses + tx in `src/chain/payouts.json`). Script: `npx tsx node/chain/settle-ausd.ts [--chain sepolia|base-sepolia]` (coordinator wallet = PAYOUT_KEY in .env, 0x363914B66e9DfD2EeC2f45F6395DB726ee0E8c76).
+- 2026-10-11: Cut cUSD from all user-facing copy (user). Payouts are AUSD only (TesseraPayouts, Ethereum Sepolia, 1,000 AUSD per committed run); Ledger earnings read `totalEarned` there. The BSC contract still mints cUSD internally; don't mention it in UI, README or submission.

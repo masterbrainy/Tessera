@@ -63,12 +63,18 @@ function Curves({ state }: { state: FedState }) {
     return row;
   });
   const fmt = (v: number) => (metric === "auc" ? v.toFixed(3) : `${(v * 100).toFixed(0)}%`);
+  const finalFed = state.rounds.at(-1)?.test[metric] ?? 0;
+  const soloFinals = soloLabs.map((l) => state.solo[l].at(-1)?.[metric] ?? 0);
+  const poisoned = soloFinals.length > 0 && finalFed < Math.min(...soloFinals);
+  const title = poisoned
+    ? "Undefended, one attacker drags the shared model below every exchange alone"
+    : "Together beats alone, without sharing a single transaction";
   return (
     <>
       <Flex justify="space-between" align="center" wrap="wrap" gap={3}>
         <Box>
           <Eyebrow>ON WEEKS NO EXCHANGE TRAINED ON (TIME STEPS 35–49)</Eyebrow>
-          <Text fontSize="22px" fontWeight={700} mt={1}>Together beats alone, without sharing a single transaction</Text>
+          <Text fontSize="22px" fontWeight={700} mt={1} color={poisoned ? "#c2410c" : undefined}>{title}</Text>
         </Box>
         <ToggleButtonGroup exclusive size="small" value={metric} onChange={(_, v) => v && setMetric(v)}>
           <ToggleButton value="catchRate" sx={{ textTransform: "none" }}>Catch rate @ 1% FPR</ToggleButton>

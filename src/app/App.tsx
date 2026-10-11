@@ -17,10 +17,26 @@ import ScorePage from "./ScorePage";
 import { useFederation, type FedState } from "./useFederation";
 import { colorOf, pct } from "./palette";
 
+/** Best final catch rate any honest exchange reached on its own, or null while baselines are still training. */
+function bestSolo(state: FedState): number | null {
+  const attackers = new Set(state.cfg.attacks.map((a) => a.lab));
+  const finals = Object.entries(state.solo)
+    .filter(([lab, c]) => !attackers.has(Number(lab)) && c.length === state.cfg.rounds)
+    .map(([, c]) => c[c.length - 1].catchRate);
+  return finals.length ? Math.max(...finals) : null;
+}
+
 function intro(state: FedState) {
   const last = state.rounds.at(-1);
   const n = state.cfg.numLabs;
   if (state.status === "done" && last) {
+    const best = bestSolo(state);
+    if (best !== null && last.test.catchRate < best) {
+      return {
+        h: `Without a defense, one malicious exchange dragged the shared model down to ${pct(last.test.catchRate)}.`,
+        p: `Every honest exchange does better on its own (best: ${pct(best)}). Switch the coordinator defense back to "Screen + trimmed mean" and run again.`,
+      };
+    }
     return {
       h: `Together, ${n} exchanges catch ${pct(last.test.catchRate)} of illicit transactions without sharing a single one.`,
       p: "Scroll down for how that compares with each exchange alone, who got paid what, and to settle the run onchain.",

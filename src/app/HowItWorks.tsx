@@ -13,7 +13,7 @@ const STEPS = [
   [Hub, "Train locally, share weights", "Every round, the coordinator sends out the current model. Each exchange trains it on its own transactions with Adam, then sends back only the weight change: 33k numbers, no transactions."],
   [GppGood, "Screen out attackers", "The coordinator compares each update with the coordinate-wise median of all of them. Updates that point away (low cosine) or are abnormally large are dropped, and the rest are combined with a trimmed mean, so a minority can't drag the model."],
   [Functions, "Price every dataset exactly", "The model is rebuilt from every subset of exchanges (2ⁿ coalitions) and scored on a shared validation window. Each exchange's exact Shapley value is what it adds on average, across all orders of joining."],
-  [Link, "Settle onchain", "TesseraLedger on BSC testnet stores the config, a keccak fingerprint of the model after every round, and every contribution, then mints the cUSD payout pool to each contributor pro rata to its contribution."],
+  [Link, "Settle onchain, pay in AUSD", "TesseraLedger on BSC testnet stores the config, a keccak fingerprint of the model after every round, and every contribution. TesseraPayouts then pays each committed run in real AUSD (Agora's dollar stablecoin, on Ethereum Sepolia) to each contributor pro rata, once per run, referencing the BSC run id and final model hash."],
   [Replay, "Anyone can audit", "All math on the training path is bit-exact across browsers and Node (custom exp/log, seeded RNG, fixed order). So anyone can replay a committed run from its config and get the same fingerprints. Payouts are verifiable, not trusted."],
 ] as const;
 

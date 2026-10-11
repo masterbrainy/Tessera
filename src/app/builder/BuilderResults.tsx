@@ -4,7 +4,8 @@ import { Blossom } from "../Garden.jsx";
 import { colorOf, paletteOf, pct } from "../palette";
 import type { Snapshot } from "./runConsortium";
 
-export const POOL_CUSD = 10_000;
+/** Matches the real AUSD settlement per committed run (src/chain/payouts.json). */
+export const POOL_AUSD = 1_000;
 
 function Panel({ children }: { children: React.ReactNode }) {
   return <Box p={6} borderRadius="16px" bg="var(--panel)" border="1px solid var(--line)">{children}</Box>;
@@ -65,8 +66,8 @@ function Payouts({ snap }: { snap: Snapshot }) {
       <Text fontSize="20px" fontWeight={700} mt={1}>What each dataset was worth</Text>
       <Text fontSize="13px" color="var(--ink-2)" mt={1} lineHeight={1.6}>
         Each round the coordinator rebuilds the model from every subset of providers ({1 << snap.members.length} coalitions) and measures what
-        each one adds on a shared validation window (exact Shapley values). A {POOL_CUSD.toLocaleString()} cUSD pool is split in proportion.
-        Updates that disagree with the consortium are rejected and earn 0.
+        each one adds on a shared validation window (exact Shapley values). A {POOL_AUSD.toLocaleString()} AUSD pool is split in proportion.
+        Updates that disagree with the consortium are rejected and earn 0. Payouts here are simulated; committed benchmark runs are paid in real AUSD (see Ledger).
       </Text>
       <Box mt={3}>
         {snap.members.map((m, lab) => {
@@ -87,7 +88,7 @@ function Payouts({ snap }: { snap: Snapshot }) {
               </Box>
               <Box w="130px" textAlign="right" flexShrink={0}>
                 <Text fontSize="16px" fontWeight={750} color={done && bps === 0 ? "#c2410c" : undefined}>
-                  {done ? `${Math.round((bps / 10000) * POOL_CUSD).toLocaleString()} cUSD` : "…"}
+                  {done ? `${Math.round((bps / 10000) * POOL_AUSD).toLocaleString()} AUSD` : "…"}
                 </Text>
                 <Text fontSize="11px" color={rej ? "#c2410c" : "var(--muted)"}>
                   {rej ? `rejected ${rej}/${snap.results.length} rounds` : done ? `${(bps / 100).toFixed(1)}% of pool` : "accepted"}
@@ -112,7 +113,7 @@ function Headline({ snap }: { snap: Snapshot }) {
     ["Best exchange alone", best ? pct(best.s) : "—", best ? `${best.m.name}, trained only on its own data` : ""],
     cut.length
       ? ["Cut from the payout", cut.map((m) => m.name).join(", "), "updates rejected: their data pulls against everyone else's"]
-      : ["Paid out", snap.phase === "done" ? `${POOL_CUSD.toLocaleString()} cUSD` : "after the last round", `split across all ${snap.members.length} exchanges by contribution`],
+      : ["Paid out", snap.phase === "done" ? `${POOL_AUSD.toLocaleString()} AUSD` : "after the last round", `split across all ${snap.members.length} exchanges by contribution`],
   ];
   return (
     <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4}>

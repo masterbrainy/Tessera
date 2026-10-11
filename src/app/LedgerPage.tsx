@@ -4,6 +4,7 @@ import { Button, Chip, LinearProgress } from "@mui/material";
 import { motion } from "framer-motion";
 import { EXCHANGES } from "../engine/data";
 import type { RunConfig } from "../engine/federation";
+import PAYOUTS from "../chain/payouts.json";
 import { DEPLOYMENT, EXPLORER, exchangeAddress, fetchEarnings, fetchRuns, publicClient, type OnchainRun } from "../chain/ledger";
 import type { ReplayIn, ReplayOut } from "../workers/protocol";
 import { DATA_URL } from "./useFederation";
@@ -288,6 +289,17 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
+/** Real AUSD settlement for a committed run (TesseraPayouts on Ethereum Sepolia), if it has been paid. */
+function AusdLink({ runId }: { runId: number }) {
+  const tx = (PAYOUTS.settlements as Record<string, string>)[String(runId)];
+  if (!tx) return <Text fontSize="12px" color="var(--muted)">AUSD payout pending</Text>;
+  return (
+    <Link href={`${PAYOUTS.explorer}/tx/${tx}`} isExternal fontSize="13px" color="var(--green)" fontWeight={650}>
+      Paid {Number(PAYOUTS.amountPerRun).toLocaleString()} AUSD on Ethereum Sepolia ↗
+    </Link>
+  );
+}
+
 function RunCard({ run, index }: { run: OnchainRun; index: number }) {
   const finalCatch = run.catchRate[run.catchRate.length - 1];
   const finalAuc = run.auc[run.auc.length - 1];
@@ -312,9 +324,12 @@ function RunCard({ run, index }: { run: OnchainRun; index: number }) {
       <Box mt={5} pt={5} borderTop="1px solid var(--line)">
         <Flex justify="space-between" align="flex-start" gap={4} wrap="wrap">
           <ReplayPanel run={run} />
-          <Link href={`${EXPLORER}/tx/${run.txHash}`} isExternal fontSize="13px" color="var(--accent)" fontWeight={600}>
-            View tx ↗
-          </Link>
+          <Flex direction="column" align="flex-end" gap={1}>
+            <Link href={`${EXPLORER}/tx/${run.txHash}`} isExternal fontSize="13px" color="var(--accent)" fontWeight={600}>
+              Committed on BSC ↗
+            </Link>
+            <AusdLink runId={run.runId} />
+          </Flex>
         </Flex>
       </Box>
     </MotionBox>

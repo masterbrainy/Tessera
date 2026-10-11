@@ -6,7 +6,7 @@ import Add from "@mui/icons-material/Add";
 import Garden from "../Garden.jsx";
 import { colorOf, pct } from "../palette";
 import ExchangeEditor from "./ExchangeEditor";
-import BuilderResults, { POOL_CUSD, rejectedRounds } from "./BuilderResults";
+import BuilderResults, { POOL_AUSD, rejectedRounds } from "./BuilderResults";
 import { MAX_EXCHANGES, statsOf, useBuilder, type Exchange } from "./useBuilder";
 import type { Snapshot } from "./runConsortium";
 import Markets from "./Markets";
@@ -24,8 +24,8 @@ function intro(snap: Snapshot, n: number) {
     return {
       h: `${snap.members.length} exchanges got paid for their data, and built a model that catches ${pct(last.catchRate)} of illicit transactions. No one shared a record.`,
       p: cut.length
-        ? `${cut.join(" and ")} had bad data: the coordinator rejected ${cut.length > 1 ? "their updates" : "its updates"} and ${cut.length > 1 ? "they earn" : "it earns"} nothing. The other exchanges split the ${POOL_CUSD.toLocaleString()} cUSD pool by contribution.`
-        : `Every exchange's data helped, so all of them share the ${POOL_CUSD.toLocaleString()} cUSD pool, in proportion to what each one added. Scroll down for the numbers.`,
+        ? `${cut.join(" and ")} had bad data: the coordinator rejected ${cut.length > 1 ? "their updates" : "its updates"} and ${cut.length > 1 ? "they earn" : "it earns"} nothing. The other exchanges split the ${POOL_AUSD.toLocaleString()} AUSD pool by contribution.`
+        : `Every exchange's data helped, so all of them share the ${POOL_AUSD.toLocaleString()} AUSD pool, in proportion to what each one added. Scroll down for the numbers.`,
     };
   }
   if (snap.phase === "training") {
@@ -123,7 +123,7 @@ export default function BuilderPage({ onModel }: { onModel: (params: Float64Arra
             <motion.button className="continue-btn" disabled={ready < 2 || !b.ds} onClick={() => void b.run(rounds)}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               {b.snap.phase === "done" ? "Run the market again →" : "Train and pay out →"}
-              <span>{ready < 2 ? "Add at least two exchanges with data" : `${ready} contributors · ${rounds} rounds · ${POOL_CUSD.toLocaleString()} cUSD to split`}</span>
+              <span>{ready < 2 ? "Add at least two exchanges with data" : `${ready} contributors · ${rounds} rounds · ${POOL_AUSD.toLocaleString()} AUSD to split`}</span>
             </motion.button>
           )}
           {b.snap.error && <Text fontSize="12px" color="#c2410c" mb={3}>{b.snap.error}</Text>}

@@ -15,6 +15,8 @@ import HowItWorks from "./HowItWorks";
 import LedgerPage from "./LedgerPage";
 import ScorePage from "./ScorePage";
 import BuilderPage from "./builder/BuilderPage";
+import ClaimPage from "./builder/ClaimPage";
+import { parseClaimHash } from "../chain/router";
 import { useFederation, type FedState } from "./useFederation";
 import { colorOf, pct } from "./palette";
 
@@ -90,6 +92,12 @@ export default function App() {
   const [view, setView] = useState<View>("build");
   const [builtModel, setBuiltModel] = useState<Float64Array | null>(null);
   const onModel = useCallback((p: Float64Array | null) => setBuiltModel(p), []);
+  const [claim, setClaim] = useState(() => parseClaimHash(window.location.hash));
+  useEffect(() => {
+    const onHash = () => setClaim(parseClaimHash(window.location.hash));
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
   const [howOpen, setHowOpen] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
   const flowers = useFlowers(state.status === "idle" ? { ...state, cfg } : state);
@@ -111,8 +119,16 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app-shell">
-        <TopBar view={view} onView={setView} onHow={() => setHowOpen(true)} />
+        <TopBar view={view} onHow={() => setHowOpen(true)} onView={(v) => {
+          if (claim) {
+            window.history.replaceState(null, "", window.location.pathname);
+            setClaim(null);
+          }
+          setView(v);
+        }} />
         <main id="main">
+          {claim && <ClaimPage wallet={claim.wallet} name={claim.name} />}
+          {!claim && <>
           <div style={{ display: view === "build" ? "block" : "none" }}>
             <BuilderPage onModel={onModel} />
             {builtModel && (
@@ -183,6 +199,7 @@ export default function App() {
           {view === "screen" && (
             <ScorePage params={builtModel ?? state.summary?.params ?? null} cfg={builtModel ? DEFAULT_CONFIG : state.summary ? state.cfg : null} onRunFirst={() => setView("build")} />
           )}
+          </>}
         </main>
         <footer className="site-footer">
           Tessera: a market for what private data is worth · Built at B@BHacks 2.0 · Elliptic dataset (real, anonymized Bitcoin transactions) · runs recorded on BSC testnet, payouts in AUSD on Ethereum Sepolia ·{" "}

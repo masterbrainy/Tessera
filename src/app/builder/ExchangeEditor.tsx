@@ -11,6 +11,8 @@ import { KIND_DEFAULTS, KINDS, labelsFor, TRAIN_STEPS, type GenSpec, type Qualit
 import { fetchSample, loadSchema, parseCsv, SAMPLE_BASE, SAMPLES } from "./csv";
 import { statsOf, type Exchange } from "./useBuilder";
 import { pct } from "../palette";
+import { isAddress } from "viem";
+import { newClaimWallet } from "../../chain/router";
 
 const QUALITY: [Quality, string, string][] = [
   ["clean", "Clean", "Labels come from the compliance team's confirmed case files."],
@@ -199,6 +201,24 @@ export default function ExchangeEditor({ ex, onClose, onUpdate, onRegenerate, on
             {busy && <Text fontSize="12px" color="var(--muted)" mt={2}>Reading and binning locally…</Text>}
             {err && <Text fontSize="12px" color="#c2410c" mt={2}>{err}</Text>}
           </Box>
+        )}
+
+        <Label>GETS PAID TO</Label>
+        <ToggleButtonGroup exclusive size="small" value={ex.payout.kind} disabled={locked}
+          onChange={(_, v) => v && v !== ex.payout.kind && onUpdate(ex.id, { payout: v === "claim" ? { kind: "claim", wallet: newClaimWallet() } : { kind: "address", address: "" } })}>
+          <ToggleButton value="claim" sx={{ textTransform: "none", px: 2 }}>No wallet yet: claim link</ToggleButton>
+          <ToggleButton value="address" sx={{ textTransform: "none", px: 2 }}>Our wallet address</ToggleButton>
+        </ToggleButtonGroup>
+        {ex.payout.kind === "claim" ? (
+          <Text fontSize="12px" color="var(--muted)" mt={1} lineHeight={1.5}>
+            AUSD goes to a fresh claim wallet ({ex.payout.wallet.address.slice(0, 6)}…{ex.payout.wallet.address.slice(-4)}) plus a little ETH for gas.
+            After the payout you get a link to send this exchange; whoever opens it withdraws to any address. No wallet or crypto needed beforehand.
+          </Text>
+        ) : (
+          <TextField size="small" fullWidth placeholder="0x… (Ethereum Sepolia)" sx={{ mt: 1 }} disabled={locked}
+            value={ex.payout.address} error={!!ex.payout.address && !isAddress(ex.payout.address)}
+            helperText={ex.payout.address && !isAddress(ex.payout.address) ? "Not a valid address" : "Any EVM address works, including an exchange deposit address."}
+            onChange={(e) => onUpdate(ex.id, { payout: { kind: "address", address: e.target.value.trim() as `0x${string}` } })} />
         )}
 
         <Label>DATA QUALITY</Label>

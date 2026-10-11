@@ -4,6 +4,8 @@ import { loadDataset } from "../../workers/protocol";
 import { DATA_URL } from "../useFederation";
 import { generate, KIND_DEFAULTS, labelsFor, randomHotSteps, type ExchangeData, type GenSpec, type Quality } from "./generate";
 import { emptySnap, runConsortium, type MemberInput, type Snapshot } from "./runConsortium";
+import { newClaimWallet, type ClaimWallet } from "../../chain/router";
+import type { Address } from "viem";
 
 export interface Exchange {
   id: string;
@@ -11,6 +13,8 @@ export interface Exchange {
   kind: string;
   quality: Quality;
   data: ExchangeData | null;
+  /** Where real AUSD goes: the exchange's own wallet, or a claim wallet whose key travels in a link. */
+  payout: { kind: "address"; address: Address | "" } | { kind: "claim"; wallet: ClaimWallet };
 }
 
 export interface ExchangeStats {
@@ -66,7 +70,7 @@ export function useBuilder() {
         STARTERS.forEach(([name, kind], k) => {
           const id = newId();
           const data = generate(d, defaultSpec(kind, 1000 + k), takenBy(list, id));
-          list.push({ id, name, kind, quality: "clean", data });
+          list.push({ id, name, kind, quality: "clean", data, payout: { kind: "claim", wallet: newClaimWallet() } });
         });
         setExchanges(list);
       })
@@ -80,7 +84,7 @@ export function useBuilder() {
     const kind = Object.keys(KIND_DEFAULTS)[exRef.current.length % 8];
     const id = newId();
     const data = generate(ds, defaultSpec(kind), takenBy(exRef.current, id));
-    setExchanges((list) => [...list, { id, name, kind, quality: "clean", data }]);
+    setExchanges((list) => [...list, { id, name, kind, quality: "clean", data, payout: { kind: "claim", wallet: newClaimWallet() } }]);
     return id;
   }, [ds]);
 

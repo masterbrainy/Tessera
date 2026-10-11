@@ -10,6 +10,7 @@ import BuilderResults, { POOL_AUSD, rejectedRounds } from "./BuilderResults";
 import { MAX_EXCHANGES, statsOf, useBuilder, type Exchange } from "./useBuilder";
 import type { Snapshot } from "./runConsortium";
 import Markets from "./Markets";
+import PayoutPanel from "./PayoutPanel";
 
 const QUALITY_CHIP = {
   clean: null,
@@ -167,6 +168,7 @@ export default function BuilderPage({ onModel }: { onModel: (params: Float64Arra
         </aside>
       </div>
       <BuilderResults snap={b.snap} />
+      <PayoutPanel snap={b.snap} exchanges={b.exchanges} params={b.params} />
       <ExchangeEditor ex={b.exchanges.find((e) => e.id === editing) ?? null} locked={busy} onClose={() => setEditing(null)}
         onUpdate={b.update} onRegenerate={b.regenerate} onRemove={b.remove} />
     </>

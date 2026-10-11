@@ -1,0 +1,6 @@
+{
+  "chainId": 11155111,
+  "router": "0x3078af1ec055e2851807cd2b32463e5c2a6a4286",
+  "deployTx": "0x2059f96f8522e2c243700fabc233f20791e66467074c6a3b32257a14df26dd2e",
+  "explorer": "https://sepolia.etherscan.io"
+}

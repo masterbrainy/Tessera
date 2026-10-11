@@ -1,6 +1,6 @@
 # Tessera
 
-**Crypto exchanges train one anti-money-laundering model together, without sharing customer data. Every member's contribution is priced exactly and paid onchain.**
+**A market where companies get paid for what their private data is worth, without ever sharing it.** Contributors train a shared model; their data never moves, only model updates do. Each one is paid by exactly how much its data improved the model (exact Shapley values, settled onchain), bad data is caught and earns nothing, and the finished model goes back to work for its members. The first live market is anti-money-laundering across crypto exchanges; the same mechanism fits card fraud, credit risk and insurance claims.
 
 **Live app:** https://masterbrainy.github.io/Tessera/ (training runs in your browser, nothing to install)
 
@@ -9,6 +9,13 @@
 Built at B@BHacks 2.0 for **Most Technically Impressive** and the **YZi Labs** track (programmable capital, trusted agent infrastructure).
 
 ---
+
+## Try the data market
+
+1. Open the [live app](https://masterbrainy.github.io/Tessera/). Three exchanges are already in the market, each with its own transaction history.
+2. **Add an exchange**, or click one to edit its data. Either **generate** its history from a business profile (venue type, number of transactions, how much illicit flow reaches it, which scam waves cash out there), or **upload a CSV** export ([template](public/samples/template.csv), [sample exports](public/samples/)). Uploaded values are binned in the browser and never leave it.
+3. Set any exchange's data quality to **Compromised** (every label inverted, as if a breached pipeline or an insider marked illicit flows clean) and press **Train and pay out**. Its updates get rejected, it earns 0 cUSD, and the others split the 10,000 cUSD pool by contribution.
+4. **Use the model**: upload today's transactions (or the sample batch) and download an alert list scored by the model the market paid for.
 
 ## The bottleneck
 
@@ -51,9 +58,9 @@ The consortium matches the "share everything" ceiling without sharing anything. 
 
 Reproduce: `npx tsx node/experiment.ts '{}' baselines` and `npx tsx node/experiment.ts '{"aggregator":"fedavg","filterAnomalies":false}'`.
 
-## Try it
+## Benchmark run (replay-verifiable onchain)
 
-1. Open the [live app](https://masterbrainy.github.io/Tessera/) and press **Run the consortium**. Watch updates travel the vines and see the malicious exchange's update stopped at the coordinator.
+1. Open **Benchmark** in the [live app](https://masterbrainy.github.io/Tessera/) and press **Run the consortium**. Watch updates travel the vines and see the malicious exchange's update stopped at the coordinator.
 2. Change the scenario: pick a different attacker or attack type ("whitelist my flows" label flipping, garbage updates), switch the defense to plain FedAvg and watch the model collapse, or turn on DP.
 3. Click any exchange for its round-by-round screening scores and Shapley values.
 4. **Ledger** lists runs committed onchain. Press **Replay & verify** to re-train in your browser and match every fingerprint.
@@ -84,7 +91,8 @@ src/engine/      pure TypeScript, identical in Node and every browser
   privacy.ts     clip + Gaussian noise, RDP epsilon
   federation.ts  labUpdate (what an exchange does), coordinate (one round), runFederation, payouts
   hash.ts        keccak model fingerprints, canonical config JSON
-src/workers/     one Web Worker per exchange + coordinator + baselines + replay
+src/workers/     one Web Worker per exchange (benchmark + data-market providers) + coordinator + baselines + replay
+src/app/builder/ data market: exchange data generator, CSV upload + binning, run loop, payouts, screen-your-own CSV
 src/app/         React UI (Chakra + MUI + framer-motion), design system from our earlier project Bloom
 src/chain/       viem client for TesseraLedger, generated ABI, deployment
 contracts/       TesseraLedger.sol + ConsortiumUSD (cUSD) reward token

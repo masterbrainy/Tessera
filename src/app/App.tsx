@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import { EXCHANGES } from "../engine/data";
 import { DEFAULT_CONFIG, type RunConfig } from "../engine/federation";
 import TopBar, { type View } from "./TopBar";
-import Garden from "./Garden.jsx";
+import Skyline from "./Skyline.jsx";
 import ActivityBar from "./Activity";
 import NowCard from "./NowCard";
 import ScenarioPanel from "./ScenarioPanel";
@@ -61,7 +61,9 @@ function useFlowers(state: FedState) {
   return useMemo(() => {
     const cfg = state.cfg;
     const attackers = new Set(cfg.attacks.map((a) => a.lab));
-    const contribution = Array.from({ length: cfg.numLabs }, (_, i) => state.rounds.reduce((a, r) => a + Math.max(0, r.labs[i]?.shapley ?? 0), 0));
+    const contribution = state.summary?.payoutBps
+      ? state.summary.payoutBps.map((b) => b / 10000)
+      : Array.from({ length: cfg.numLabs }, (_, i) => Math.max(0, state.rounds.reduce((a, r) => a + (r.labs[i]?.shapley ?? 0), 0)));
     const total = contribution.reduce((a, b) => a + b, 0);
     const last = state.rounds.at(-1);
     return Array.from({ length: cfg.numLabs }, (_, lab) => {
@@ -83,7 +85,7 @@ function useFlowers(state: FedState) {
         statusColor: rejectedRounds ? "#c2410c" : attacker ? "#c2410c" : "var(--green)",
       };
     });
-  }, [state.cfg, state.labs, state.rounds]);
+  }, [state.cfg, state.labs, state.rounds, state.summary]);
 }
 
 export default function App() {
@@ -155,11 +157,11 @@ export default function App() {
                     {state.cfg.numLabs} exchanges{totalTx ? ` · ${totalTx.toLocaleString()} private transactions` : ""} · 1 coordinator
                   </span>
                   <div className="garden-canvas">
-                    <Garden flowers={flowers} event={state.event} onPick={setPicked}
+                    <Skyline flowers={flowers} event={state.event} onPick={setPicked}
                       caption={busy ? `round ${state.round + 1} of ${state.cfg.rounds}` : "sees weights, never transactions"} />
                   </div>
                   <div className="legend" aria-label="Legend">
-                    <span><i style={{ background: "#e8799a" }} />Exchange (bigger = more rewards)</span>
+                    <span><i style={{ background: "#e8799a" }} />Exchange (taller = more data and rewards)</span>
                     <span><i style={{ background: "#a08a78" }} />Malicious exchange</span>
                     <span><i style={{ background: "var(--hub)" }} />Model weights in transit</span>
                     <span><i style={{ background: "#c2410c" }} />Rejected update</span>

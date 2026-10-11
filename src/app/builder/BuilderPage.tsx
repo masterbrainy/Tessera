@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { Button, Chip, Slider } from "@mui/material";
 import Add from "@mui/icons-material/Add";
-import Garden from "../Garden.jsx";
+import Skyline from "../Skyline.jsx";
 import { colorOf, pct } from "../palette";
 import ExchangeEditor from "./ExchangeEditor";
 import BuilderResults, { POOL_AUSD, rejectedRounds } from "./BuilderResults";
@@ -43,7 +43,10 @@ function intro(snap: Snapshot, n: number) {
 
 function flowersOf(exchanges: Exchange[], snap: Snapshot) {
   const inRun = snap.phase !== "idle" && snap.members.length > 0;
-  const contribution = snap.members.map((_, lab) => snap.results.reduce((a, r) => a + Math.max(0, r.labs[lab]?.shapley ?? 0), 0));
+  // Same rule as the payout: clip each exchange's run total (not each round) at zero, then normalise.
+  const contribution = snap.payoutBps
+    ? snap.payoutBps.map((b) => b / 10000)
+    : snap.members.map((_, lab) => Math.max(0, snap.results.reduce((a, r) => a + (r.labs[lab]?.shapley ?? 0), 0)));
   const total = contribution.reduce((a, b) => a + b, 0);
   const last = snap.results.at(-1);
   const list = inRun ? snap.members.map((m) => ({ id: m.id, name: m.name, kind: m.kind, n: m.n })) : exchanges.map((e) => ({ id: e.id, name: e.name, kind: e.kind, n: statsOf(e.data).labeled }));
@@ -60,7 +63,7 @@ function flowersOf(exchanges: Exchange[], snap: Snapshot) {
       rejected: !!last?.labs[lab] && !last.labs[lab].accepted,
       color: colorOf(lab, rej > 0),
       scale: snap.results.length ? 0.78 + Math.min(1, share * list.length) * 0.32 + share * 0.4 : 1,
-      status: rej ? `✕ rejected ${rej}/${snap.results.length}` : snap.results.length ? `${pct(share)} of rewards` : `${m.n.toLocaleString()} tx`,
+      status: rej ? `✕ rejected ${rej}/${snap.results.length}` : snap.payoutBps ? `${(snap.payoutBps[lab] / 100).toFixed(1)}% of rewards` : snap.results.length ? `${pct(share)} of rewards` : `${m.n.toLocaleString()} tx`,
       statusColor: rej ? "#c2410c" : "var(--green)",
     };
   });
@@ -103,12 +106,12 @@ export default function BuilderPage({ onModel }: { onModel: (params: Float64Arra
           </span>
           <div className="garden-canvas">
             {b.loadError ? <Text color="#c2410c" p={6}>{b.loadError}</Text> : (
-              <Garden flowers={flowers} event={b.snap.event} onPick={pick}
+              <Skyline flowers={flowers} event={b.snap.event} onPick={pick}
                 caption={busy ? `round ${b.snap.results.length + 1} of ${b.snap.totalRounds}` : "sees weights, never transactions"} />
             )}
           </div>
           <div className="legend" aria-label="Legend">
-            <span><i style={{ background: "#e8799a" }} />Exchange (bigger = more rewards)</span>
+            <span><i style={{ background: "#e8799a" }} />Exchange (taller = more data and rewards)</span>
             <span><i style={{ background: "var(--hub)" }} />Model weights in transit</span>
             <span><i style={{ background: "#c2410c" }} />Rejected update</span>
             <span><i style={{ background: "#a08a78" }} />Caught with bad data</span>

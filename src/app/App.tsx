@@ -185,7 +185,7 @@ export default function App() {
           )}
         </main>
         <footer className="site-footer">
-          Tessera: a market for what private data is worth · Built at B@BHacks 2.0 · Elliptic dataset (real, anonymized Bitcoin transactions) · payouts settle on BSC testnet ·{" "}
+          Tessera: a market for what private data is worth · Built at B@BHacks 2.0 · Elliptic dataset (real, anonymized Bitcoin transactions) · runs recorded on BSC testnet, payouts in AUSD on Ethereum Sepolia ·{" "}
           <a href="https://github.com/masterbrainy/Tessera" target="_blank" rel="noreferrer">source</a>
         </footer>
         <ExchangeDialog lab={picked} state={state} onClose={() => setPicked(null)} />

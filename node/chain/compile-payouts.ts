@@ -1,4 +1,4 @@
-// Compile contracts/TesseraPayouts.sol (AUSD settlement on Base Sepolia) and write its ABI + bytecode.
+// Compile contracts/TesseraPayouts.sol (AUSD settlement on an Agora testnet) and write its ABI + bytecode.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";

@@ -55,8 +55,7 @@ GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Pu
 - REPO: https://github.com/masterbrainy/Tessera (public)
 - DONE: data, engine, distributed HTTP mode, contract + compile, deploy script, workers, full bloom-style UI (garden, scenario, results, payouts, commit card, exchange dialog, how-it-works, ledger + replay verify, screen-a-transaction), 7 vitest tests, README
 - VERIFIED: browser and Node produce the same final model hash for the default config (0x0451f9b6…)
-- BLOCKED: contract deploy needs ~0.01 tBNB on the deployer (0x6bc4047aFC6D9aFf13f3e51627CB35075fa7ddc1)
-- TODO after funding: `pnpm deploy`, commit 2–3 reference runs via `node/coordinator.ts --spawn --submit` (defended, undefended FedAvg, DP), push deployment.json
+- ONCHAIN: TesseraLedger 0x751199289a537366a6f56f2c54fb4d5938221ea3, cUSD 0x2A001a150DECF58B9e2d3cFC4b299959cc39E121 (BSC testnet). Runs #0 defended, #1 plain FedAvg under attack, #2 DP, all committed by `node/coordinator.ts --spawn --submit`. Deployer has ~0.00025 tBNB left (~5 more commits at 0.1 gwei).
 - TODO: demo video, submission text (Plan & Pivot session)
 
 ## Parallel sessions: coordination rules

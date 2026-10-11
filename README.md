@@ -4,6 +4,8 @@
 
 **Live app:** https://masterbrainy.github.io/Tessera/ (training runs in your browser, nothing to install)
 
+**Onchain (BSC testnet):** [TesseraLedger `0x7511…1ea3`](https://testnet.bscscan.com/address/0x751199289a537366a6f56f2c54fb4d5938221ea3) · [cUSD token `0x2A00…E121`](https://testnet.bscscan.com/token/0x2A001a150DECF58B9e2d3cFC4b299959cc39E121) · reference runs committed by the distributed coordinator: [defended](https://testnet.bscscan.com/tx/0x52b64909a3b6a3286d9ad9cb5831d819ce1ea31ba07acafc093f057fc7888c00), [plain FedAvg under attack](https://testnet.bscscan.com/tx/0x847c072916a6f103c4e17be25eac081156a2c5e67676a05078a063ed2a6ccbcf), [with differential privacy](https://testnet.bscscan.com/tx/0xc5a50c9f7211ca8d8295f441ac3f068620c16aeee74c0d7e7e6cd63ae0a8eae1)
+
 Built at B@BHacks 2.0 for **Most Technically Impressive** and the **YZi Labs** track (programmable capital, trusted agent infrastructure).
 
 ---

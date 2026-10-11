@@ -1,1 +1,6 @@
-{"chainId":97,"ledger":null,"cusd":null,"deployBlock":0}
+{
+  "chainId": 97,
+  "ledger": "0x751199289a537366a6f56f2c54fb4d5938221ea3",
+  "cusd": "0x2A001a150DECF58B9e2d3cFC4b299959cc39E121",
+  "deployBlock": 136237752
+}

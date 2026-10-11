@@ -22,6 +22,8 @@ export interface RunConfig {
   trimFrac: number;
   /** Drop updates the screening step flags before aggregating. */
   filterAnomalies: boolean;
+  /** Screening cosine threshold (default 0.1). Live rooms with few members use a stricter one. */
+  screenCos?: number;
   attacks: { lab: number; type: AttackType }[];
   dp: DpConfig;
 }
@@ -88,7 +90,7 @@ export function labUpdate(
     { epochs: cfg.localEpochs, lr: cfg.lr, batchSize: cfg.batchSize, flipLabels: attack === "labelFlip" },
     rng,
   );
-  let delta = new Float64Array(local.length);
+  let delta: Float64Array = new Float64Array(local.length);
   for (let i = 0; i < delta.length; i++) delta[i] = local[i] - global[i];
   const rawNorm = norm(delta);
 
@@ -182,7 +184,7 @@ export function coordinate(
   updates: readonly LabUpdate[],
 ): { next: Float64Array; result: Omit<RoundResult, "ms"> } {
   const { cfg, part } = ctx;
-  const screening = screen(updates);
+  const screening = screen(updates, cfg.screenCos ?? 0.1);
   const acceptedMask = updates.reduce(
     (m, _, i) => (cfg.filterAnomalies && screening[i].flagged ? m : m | (1 << i)),
     0,
@@ -293,7 +295,7 @@ export function baselineCurve(
   ctx: Context,
   molecules: readonly number[],
   salt: number,
-  onRound?: (round: number, auc: number) => void,
+  onRound?: (round: number, scores: Scores) => void,
 ): Scores[] {
   let p = initialParams(ctx.cfg, ctx.ds);
   const curve: Scores[] = [];

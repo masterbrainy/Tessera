@@ -27,7 +27,13 @@ export interface Deployment {
 
 export const DEPLOYMENT = deployment as Deployment;
 export const CHAIN: Chain = bscTestnet;
-export const RPC_URL = "https://data-seed-prebsc-1-s1.bnbchain.org:8545";
+// The official BNB seed RPCs reject eth_getLogs ("limit exceeded"); PublicNode serves logs with CORS.
+const DEFAULT_RPC = "https://bsc-testnet-rpc.publicnode.com";
+// VITE_RPC_URL (browser) or RPC_URL (node) let the same code target a local chain for testing.
+export const RPC_URL: string =
+  (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_RPC_URL ??
+  (typeof process !== "undefined" ? process.env.RPC_URL : undefined) ??
+  DEFAULT_RPC;
 export const EXPLORER = "https://testnet.bscscan.com";
 
 export function publicClient(): PublicClient {

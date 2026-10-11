@@ -5,8 +5,13 @@ Tracks: **Most Technically Impressive** (general) + **YZi Labs** sponsor track (
 bottleneck, team could keep building it"; Binance-affiliated). Judges are finance/startup/blockchain
 people, so the framing is **finance**, not medical.
 
-## Pitch
-Crypto exchanges / VASPs each see only a slice of illicit flow (scam waves cash out through
+## Pitch (updated 2026-10-11 by the user, this framing wins)
+A **market where companies get paid for what their private data is worth, without sharing it**. Not "we
+train a model": contributors are paid by contribution (Shapley), bad data earns 0, and the trained model is then
+used for good (members screen their own transactions for laundering/fraud). AML is the first live market, not
+the only one (card fraud, credit risk, insurance claims use the same mechanism).
+
+Original AML framing, still accurate for the first market: Crypto exchanges / VASPs each see only a slice of illicit flow (scam waves cash out through
 different venues), but can't share customer transaction data (privacy, competition, regulation).
 Tessera lets them train one anti-money-laundering model together: only weight updates leave each
 exchange. The coordinator screens out poisoned updates, prices every exchange's contribution with
@@ -42,7 +47,7 @@ Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alar
 - `node/` real distributed mode: `lab-server.ts` (one HTTP process per exchange), `coordinator.ts --spawn [--submit]`, `chain/deploy.ts`, `experiment.ts` (tuning sweeps)
 
 ## Commands
-- `pnpm dev` / `pnpm build` (Vite, base `/tessera/` for GitHub Pages)
+- `pnpm dev` / `pnpm build` (Vite, base `/Tessera/` for GitHub Pages)
 - `npx tsx node/experiment.ts '{"aggregator":"fedavg","filterAnomalies":false}' baselines`
 - `npx tsx node/coordinator.ts --spawn --config '{"rounds":3}' [--submit]`
 - `pnpm compile && pnpm deploy` (needs tBNB on the deployer in `.env`, address 0x6bc4047aFC6D9aFf13f3e51627CB35075fa7ddc1)
@@ -51,10 +56,17 @@ Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alar
 GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Public repo under `masterbrainy`.
 
 ## Status (update as you go)
-- DONE: data, engine, distributed HTTP mode (verified deterministic vs in-process), contract + compile, deploy script, workers, `useFederation` hook
-- IN PROGRESS (main session): bloom-style UI: App shell, Garden, scenario controls, results/charts, Ledger page (+ replay verify), Screen-a-transaction page
-- BLOCKED: contract deploy needs tBNB from the user
-- TODO: tests (determinism, Shapley efficiency), README, GitHub Pages deploy, demo video script, submission text
+- LIVE: https://masterbrainy.github.io/Tessera/ (GitHub Actions deploys on every push to main; runs `pnpm test` + `pnpm build`)
+- REPO: https://github.com/masterbrainy/Tessera (public)
+- DONE: data, engine, distributed HTTP mode, contract + compile, deploy script, workers, full bloom-style UI (garden, scenario, results, payouts, commit card, exchange dialog, how-it-works, ledger + replay verify, screen-a-transaction), 7 vitest tests, README
+- VERIFIED: browser and Node produce the same final model hash for the default config (0x0451f9b6…)
+- ONCHAIN: TesseraLedger 0x751199289a537366a6f56f2c54fb4d5938221ea3, cUSD 0x2A001a150DECF58B9e2d3cFC4b299959cc39E121 (BSC testnet). Runs #0 defended, #1 plain FedAvg under attack, #2 DP, all committed by `node/coordinator.ts --spawn --submit`. Deployer has ~0.00025 tBNB left (~5 more commits at 0.1 gwei).
+- DONE (15:40): **Data market** is the default tab (`src/app/builder/`): add exchanges, generate each one's data from a
+  profile (real Elliptic rows drawn to match size / illicit share / hot scam waves, no row shared) or upload a CSV
+  (`public/samples/*.csv`, template), mark data Clean / Noisy / Compromised, train + pay out (12 rounds default,
+  screening cos 0.3). Compromised exchange is rejected and earns 0. "Use the model" page screens an uploaded CSV.
+  Old simulation = "Benchmark" tab (unchanged, onchain/replay). Multi-laptop rooms were built then dropped (user).
+- TODO: demo video (user said not yet), submission text (Plan & Pivot session) must use the data-market pitch
 
 ## Parallel sessions: coordination rules
 - **Main build session** owns: `src/app/**`, `src/workers/**`, `src/chain/**`, `node/**`, `contracts/**`.
@@ -68,4 +80,5 @@ GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Pu
 - 2026-10-11: Track = Most Technically Impressive + YZi Labs. Chain = BSC testnet.
 - 2026-10-11: Pivoted domain from drug discovery (Tox21) to finance/AML (Elliptic) because judges are finance/blockchain.
 - 2026-10-11: UI copies bloom's design system exactly (user request).
+- 2026-10-11: Pitch = data market (paid for private data's worth, without sharing); AML is market #1. UI default tab = Data market builder.
 - 2026-10-11: Static deploy (GitHub Pages); all training runs client-side in Web Workers, plus Node distributed mode for the "real network" story.

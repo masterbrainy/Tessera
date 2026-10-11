@@ -7,3 +7,7 @@ data/raw
 .DS_Store
 artifacts
 cache
+.claude/
+demo/build/
+demo/*.mp4
+demo/*.mov

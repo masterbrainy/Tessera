@@ -42,7 +42,7 @@ Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alar
 - `node/` real distributed mode: `lab-server.ts` (one HTTP process per exchange), `coordinator.ts --spawn [--submit]`, `chain/deploy.ts`, `experiment.ts` (tuning sweeps)
 
 ## Commands
-- `pnpm dev` / `pnpm build` (Vite, base `/tessera/` for GitHub Pages)
+- `pnpm dev` / `pnpm build` (Vite, base `/Tessera/` for GitHub Pages)
 - `npx tsx node/experiment.ts '{"aggregator":"fedavg","filterAnomalies":false}' baselines`
 - `npx tsx node/coordinator.ts --spawn --config '{"rounds":3}' [--submit]`
 - `pnpm compile && pnpm deploy` (needs tBNB on the deployer in `.env`, address 0x6bc4047aFC6D9aFf13f3e51627CB35075fa7ddc1)

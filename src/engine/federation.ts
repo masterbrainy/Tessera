@@ -88,7 +88,7 @@ export function labUpdate(
     { epochs: cfg.localEpochs, lr: cfg.lr, batchSize: cfg.batchSize, flipLabels: attack === "labelFlip" },
     rng,
   );
-  let delta = new Float64Array(local.length);
+  let delta: Float64Array = new Float64Array(local.length);
   for (let i = 0; i < delta.length; i++) delta[i] = local[i] - global[i];
   const rawNorm = norm(delta);
 
@@ -293,7 +293,7 @@ export function baselineCurve(
   ctx: Context,
   molecules: readonly number[],
   salt: number,
-  onRound?: (round: number, auc: number) => void,
+  onRound?: (round: number, scores: Scores) => void,
 ): Scores[] {
   let p = initialParams(ctx.cfg, ctx.ds);
   const curve: Scores[] = [];

@@ -7,3 +7,4 @@ data/raw
 .DS_Store
 artifacts
 cache
+.claude/

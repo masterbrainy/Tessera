@@ -146,3 +146,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline
 .activity-bar time { margin-left: auto; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .activity-dot { flex: 0 0 12px; height: 12px; margin-top: 4px; border-radius: 50%; background: var(--hub); animation: activity-ping 1.4s ease-out infinite; }
 @keyframes activity-ping { 0% { box-shadow: 0 0 0 0 rgba(240, 160, 32, .55); } 100% { box-shadow: 0 0 0 12px rgba(240, 160, 32, 0); } }
+
+/* --- tessera additions --- */
+.header-links button { background: none; border: 0; }
+.header-links button.current { color: var(--ink); background: rgba(43, 33, 24, .06); font-weight: 600; }
+.brand { color: var(--ink); }
+.continue-btn.secondary { background: var(--panel); color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+.site-footer { margin: 40px 4% 30px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.site-footer a, .activity-column a { color: var(--accent); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; background: var(--panel-2); padding: 1px 5px; border-radius: 5px; }

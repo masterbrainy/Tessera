@@ -100,8 +100,10 @@ The data that best catches fraud and money laundering is split across companies 
 | C3 | Coordinator-only `settle()` pays a committed run once, using its committed split | Shipped |
 | C4 | Browser "Replay & verify" recomputes every round hash and Shapley score of a committed run | Shipped |
 | C5 | Coordinator registry / permissioned `commitRun` on the ledger (anyone can commit today) | Planned |
-| C6 | Data market runs committed and settled onchain (they're simulated today) | Planned |
-| C7 | Payouts to members' own wallets (today: deterministic addresses that nobody holds keys for) | Planned |
+| C6 | Data market runs paid in AUSD by a sponsor in one transaction via `TesseraPayoutRouter` | Shipped |
+| C6b | Data market runs committed to BSC and replayable before payment | Planned |
+| C7 | Pay members to their own wallet, or to a claim link (a generated wallet, pre-loaded with gas, whose holder withdraws anywhere) | Shipped |
+| C7b | Claim flow without bearer keys in links (e.g. signed claims or email-verified withdrawals) | Planned |
 
 ### App
 | ID | Requirement | Status |
@@ -148,13 +150,15 @@ Measured on the future test window. Catch rate = share of illicit transactions f
 - `src/workers/`: one Web Worker per member, plus coordinator, baseline and replay workers.
 - `node/`: distributed mode (`lab-server.ts` per member, `coordinator.ts --spawn --submit`), deploy and
   settlement scripts.
-- `contracts/`: `TesseraLedger.sol` (BSC testnet, run records), `TesseraPayouts.sol` (Ethereum Sepolia, AUSD payouts).
+- `contracts/`: `TesseraLedger.sol` (BSC testnet, run records), `TesseraPayouts.sol` (Ethereum Sepolia, pool that
+  settles committed runs), `TesseraPayoutRouter.sol` (Ethereum Sepolia, sponsor pays a Data market run in one tx).
 - `src/app/`: React + Vite, Chakra + MUI, framer-motion, Recharts. Hosted on GitHub Pages.
 
 | Contract | Chain | Address |
 |---|---|---|
 | TesseraLedger | BSC testnet (97) | `0x751199289a537366a6f56f2c54fb4d5938221ea3` |
 | TesseraPayouts | Ethereum Sepolia (11155111) | `0xd7ddbbd3468821878bdf5fe2f39e5b9820bf7f89` |
+| TesseraPayoutRouter | Ethereum Sepolia (11155111) | `0x3078af1ec055e2851807cd2b32463e5c2a6a4286` |
 | AUSD (Agora testnet) | Ethereum Sepolia | `0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC` |
 
 ## 9. Risks and mitigations
@@ -165,6 +169,8 @@ Measured on the future test window. Catch rate = share of illicit transactions f
 | Gradient leakage from weight deltas | Partial privacy loss | Optional DP (F5); Planned: secure aggregation |
 | Honest-but-unusual members rejected by screening | Unfair 0 payout | Median-referenced screening tuned on non-IID members; rejection is visible per round |
 | Shapley cost grows as 2^n | Doesn't scale past ~10 members | Planned: Monte Carlo Shapley (P3) |
+| Claim links are bearer keys | Whoever holds the link can withdraw | Testnet only; Planned: signed or verified claims (C7b) |
+| Router pays whatever split the sponsor submits | Unverified Data market payouts | Planned: commit to BSC first (C6b) |
 | Coordinator is a trusted operator for settlement | Wrong payouts | Settlement must match the committed split; anyone can replay before trusting it |
 | Two chains (record on BSC, pay on Sepolia) | Linkage is by run id + hash, not a bridge | Each settlement cites the BSC run id and final model hash; Planned: single-chain settlement once AUSD is on BNB Chain |
 | Simulated members | Results may not transfer to real exchanges | Pilot with real members on a shared feature spec |
@@ -172,7 +178,7 @@ Measured on the future test window. Catch rate = share of illicit transactions f
 ## 10. Roadmap
 
 1. **Close the money loop.** Model users pay per screened transaction or by subscription into the AUSD pool.
-2. **Trust minimization.** Permissioned commits, a challenge window, payouts to member-held wallets.
+2. **Trust minimization.** Permissioned commits, a challenge window, commit-before-pay for Data market runs, safer claims.
 3. **Scale.** Monte Carlo Shapley, secure aggregation, larger models.
 4. **Pilot.** 3–5 exchanges on a shared feature spec, with an on-prem member client.
 5. **New markets, same engine.** Card and payments fraud, credit risk, insurance claims fraud.

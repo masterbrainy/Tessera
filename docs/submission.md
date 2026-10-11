@@ -8,6 +8,7 @@ exchanges the viewer builds.
 - Repo: https://github.com/masterbrainy/Tessera
 - Run ledger (BSC testnet): https://testnet.bscscan.com/address/0x751199289a537366a6f56f2c54fb4d5938221ea3
 - AUSD payout pool (Ethereum Sepolia): https://sepolia.etherscan.io/address/0xd7ddbbd3468821878bdf5fe2f39e5b9820bf7f89
+- AUSD payout router (Ethereum Sepolia): https://sepolia.etherscan.io/address/0x3078af1ec055e2851807cd2b32463e5c2a6a4286
 - Tracks: Most Technically Impressive, YZi Labs
 
 ---
@@ -47,7 +48,11 @@ Tessera is a market for what private data knows, not for the data itself.
 5. **Get paid in real stablecoins.** A funded AUSD pool (`TesseraPayouts`, Ethereum Sepolia) settles each committed
    run exactly once, using the split recorded on BSC and citing that run's id and final model hash. Anyone can
    top up the pool with `fund()`; only the coordinator can settle.
-6. **Use the model.** Members screen their own transactions with the model they helped train and download an
+6. **Pay any consortium for real, even exchanges without a wallet.** After a Data market run, a sponsor connects
+   MetaMask and pays every exchange its Shapley share in AUSD in one transaction (`TesseraPayoutRouter`). An
+   exchange with no wallet gets a claim link instead: opening it shows what its data earned and lets it withdraw
+   to any address. The claim wallet comes pre-loaded with a little ETH for gas.
+7. **Use the model.** Members screen their own transactions with the model they helped train and download an
    alert list.
 
 ## Results (real Bitcoin data, Elliptic dataset, 5-member consortium)
@@ -111,6 +116,8 @@ liability, it records every run on BNB Chain, and the engine extends to every ma
 ## Honest scope (say it before a judge asks)
 - The 5 exchanges are simulated from one public dataset (real labeled Bitcoin transactions, split unevenly).
 - The AUSD pool is funded from Agora's testnet faucet, not by model-user fees yet.
-- Payouts on the Data market tab are computed in the browser; the onchain commitments and replay are on the
-  Benchmark tab.
+- Data market runs aren't committed to BSC, so they can't be replayed. When a sponsor pays one through the router, the
+  split is whatever the sponsor's browser computed; onchain commitments and replay are on the Benchmark tab.
+- A claim link carries the claim wallet's private key in the URL fragment, which is never sent to a server.
+  Anyone holding the link can withdraw, so it's a bearer link: fine on testnet, needs a proper claim flow for real money.
 - Anyone can call `commitRun` today. Replay exposes a bad run, but nothing blocks it from being posted.

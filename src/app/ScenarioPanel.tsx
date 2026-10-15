@@ -7,7 +7,7 @@ import { epsilon } from "../engine/privacy";
 
 const ATTACKS: [AttackType, string, string][] = [
   ["signFlip", "Model poisoning", "sends a boosted update pointing the wrong way"],
-  ["labelFlip", "Whitelist my flows", "trains on inverted labels so laundering looks clean"],
+  ["labelFlip", "Whitelist my flows", "trains on inverted labels so fraud looks clean"],
   ["noise", "Garbage updates", "free-rider sending random weights"],
 ];
 

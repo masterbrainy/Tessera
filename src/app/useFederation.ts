@@ -163,7 +163,7 @@ export function useFederation() {
             ...activity(
               rejected.length
                 ? `Round ${r + 1}: rejected ${names(rejected)}'s update. It pointed away from everyone else's.`
-                : `Round ${r + 1} merged. The model now catches ${(result.test.catchRate * 100).toFixed(1)}% of illicit transactions.`,
+                : `Round ${r + 1} merged. The model now catches ${(result.test.catchRate * 100).toFixed(1)}% of fraudulent transactions.`,
             ),
           }));
         }

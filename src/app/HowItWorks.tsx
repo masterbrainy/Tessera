@@ -31,9 +31,10 @@ export default function HowItWorks({ open, onClose }: { open: boolean; onClose: 
         <Text mt={3} fontSize="15px" color="var(--ink-2)" lineHeight={1.7}>
           The most valuable data in finance is private: transaction histories, fraud cases, repayment records. Companies can't sell or share it (privacy law,
           competition, customer trust), so its value goes unused. Tessera turns it into an income stream: contributors train a shared model without sending a single
-          record, each one is paid by exactly how much its data improved the model, and the finished model goes back to work, helping members catch money laundering
-          and fraud. The first live market is anti-money-laundering across crypto exchanges, where illicit flow is fragmented across venues; the same mechanism
-          works for card fraud, credit risk or insurance claims. Data here is real: the Elliptic dataset of 46,564 labeled Bitcoin transactions.
+          record, each one is paid by exactly how much its data improved the model, and the finished model goes back to work, helping members stop scams
+          and fraud. The first live market is crypto fraud: scam waves cash out through many exchanges, wallets and payment apps, and each one sees only a slice; the
+          same mechanism works for card fraud, credit risk or insurance claims. Data here is real: the Elliptic dataset of 46,564 labeled Bitcoin transactions, where
+          the fraud label covers Elliptic's illicit class (scams, Ponzi schemes, ransomware and other criminal flow).
         </Text>
         <Box mt={5} display="grid" gap={3}>
           {STEPS.map(([Icon, title, body], i) => (

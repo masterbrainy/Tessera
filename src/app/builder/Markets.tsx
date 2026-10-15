@@ -2,10 +2,10 @@ import { Box, Grid, Text } from "@chakra-ui/react";
 
 // One mechanism, many markets: wherever private data is valuable but can't be shared.
 const MARKETS: [string, string, string, boolean][] = [
-  ["Anti-money-laundering", "Crypto exchanges, OTC desks, payment apps", "Each venue sees one slice of illicit flow. Together they see the pattern.", true],
+  ["Crypto fraud & scams", "Exchanges, wallets, crypto payment apps", "Scam waves cash out through many venues; each one sees a slice. Together they see the pattern.", true],
   ["Card & payments fraud", "Banks, fintechs, merchants", "Fraud rings hit many issuers at once; no single one sees the whole ring.", false],
+  ["Anti-money-laundering", "Exchanges, OTC desks, banks", "Laundering routes hop between institutions to stay under each one's radar.", false],
   ["Credit risk", "Lenders, BNPL, neobanks", "Thin-file borrowers look different at every lender.", false],
-  ["Insurance claims fraud", "Insurers, brokers", "Staged claims get filed across carriers.", false],
 ];
 
 export default function Markets() {

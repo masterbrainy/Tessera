@@ -41,19 +41,19 @@ function intro(state: FedState) {
       };
     }
     return {
-      h: `Together, ${n} exchanges catch ${pct(last.test.catchRate)} of illicit transactions without sharing a single one.`,
+      h: `Together, ${n} exchanges catch ${pct(last.test.catchRate)} of fraudulent transactions without sharing a single one.`,
       p: "Scroll down for how that compares with each exchange alone, who got paid what, and to settle the run onchain.",
     };
   }
   if ((state.status === "running" || state.status === "loading") && state.cfg) {
     return {
-      h: last ? `Round ${state.round + 1} of ${state.cfg.rounds}: the shared model catches ${pct(last.test.catchRate)} of illicit transactions` : `${n} exchanges are joining the consortium…`,
+      h: last ? `Round ${state.round + 1} of ${state.cfg.rounds}: the shared model catches ${pct(last.test.catchRate)} of fraudulent transactions` : `${n} exchanges are joining the consortium…`,
       p: "Watch the weight updates travel. Transactions never leave their exchange; a malicious member's update gets stopped at the coordinator.",
     };
   }
   return {
     h: "Benchmark: 5 exchanges, one of them malicious, every run replay-verifiable onchain.",
-    p: "Each exchange only sees part of the illicit flow. Tessera lets them pool what they learn instead of what they hold, prices every member's contribution exactly, and settles payouts onchain. Real data: 46,564 labeled Bitcoin transactions (Elliptic).",
+    p: "Each exchange only sees part of every scam wave. Tessera lets them pool what they learn instead of what they hold, prices every member's contribution exactly, and keeps an auditable record of every run. Real data: 46,564 labeled Bitcoin transactions (Elliptic).",
   };
 }
 

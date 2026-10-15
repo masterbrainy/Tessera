@@ -23,7 +23,7 @@ function intro(snap: Snapshot, n: number) {
   if (snap.phase === "done" && last) {
     const cut = snap.members.filter((_, lab) => rejectedRounds(snap, lab) > 0).map((m) => m.name);
     return {
-      h: `${snap.members.length} exchanges got paid for their data, and built a model that catches ${pct(last.catchRate)} of illicit transactions. No one shared a record.`,
+      h: `${snap.members.length} exchanges got paid for their data, and built a model that catches ${pct(last.catchRate)} of fraudulent transactions. No one shared a record.`,
       p: cut.length
         ? `${cut.join(" and ")} had bad data: the coordinator rejected ${cut.length > 1 ? "their updates" : "its updates"} and ${cut.length > 1 ? "they earn" : "it earns"} nothing. The other exchanges split the ${POOL_AUSD.toLocaleString()} AUSD pool by contribution.`
         : `Every exchange's data helped, so all of them share the ${POOL_AUSD.toLocaleString()} AUSD pool, in proportion to what each one added. Scroll down for the numbers.`,
@@ -31,13 +31,13 @@ function intro(snap: Snapshot, n: number) {
   }
   if (snap.phase === "training") {
     return {
-      h: last ? `Round ${snap.results.length} of ${snap.totalRounds}: the shared model catches ${pct(last.catchRate)} of illicit transactions` : "Each exchange is loading its data into a private worker…",
+      h: last ? `Round ${snap.results.length} of ${snap.totalRounds}: the shared model catches ${pct(last.catchRate)} of fraudulent transactions` : "Each exchange is loading its data into a private worker…",
       p: snap.status,
     };
   }
   return {
     h: "Get paid for what your private data is worth, without ever sharing it.",
-    p: `Companies contribute private data to train a shared model. The data never leaves them, only model updates do. Each contributor is paid by exactly how much its data improved the model; bad data is caught and earns nothing. The trained model then goes back to work for its members. Live market: anti-money-laundering. Add exchanges, give each its transaction history (generate it or upload a CSV), and run.${n ? ` ${n} contributors so far.` : ""}`,
+    p: `Companies contribute private data to train a shared model. The data never leaves them, only model updates do. Each contributor is paid by exactly how much its data improved the model; bad data is caught and earns nothing. The trained model then goes back to work for its members. Live market: crypto fraud and scams. Add exchanges, give each its transaction history (generate it or upload a CSV), and run.${n ? ` ${n} contributors so far.` : ""}`,
   };
 }
 
@@ -143,7 +143,7 @@ export default function BuilderPage({ onModel }: { onModel: (params: Float64Arra
                 <Box flex={1} minW={0}>
                   <Text fontSize="14px" fontWeight={650}>{e.name || "Unnamed exchange"}</Text>
                   <Text fontSize="11px" color="var(--muted)">
-                    {e.kind} · {e.data ? `${st.labeled.toLocaleString()} tx · ${pct(st.illicit / Math.max(1, st.labeled))} illicit · ${e.data.source}` : "no data yet"}
+                    {e.kind} · {e.data ? `${st.labeled.toLocaleString()} tx · ${pct(st.illicit / Math.max(1, st.labeled))} fraud · ${e.data.source}` : "no data yet"}
                   </Text>
                 </Box>
                 {q && <Chip size="small" label={q.label} sx={{ fontSize: 10, height: 20, bgcolor: "transparent", border: `1px solid ${q.color}`, color: q.color }} />}

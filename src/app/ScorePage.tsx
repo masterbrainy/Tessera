@@ -180,10 +180,10 @@ function Verdict({ ds, scored, row }: { ds: Dataset; scored: Scored; row: number
         <Text fontSize="52px" lineHeight="1.1" fontWeight={800} color={alert ? "var(--accent)" : "var(--ink)"}>{pct(score)}</Text>
         <Box pb={6}><Gauge score={score} threshold={scored.threshold} /></Box>
         <Text mt={2} fontSize="18px" fontWeight={700} color={alert ? "var(--accent)" : "var(--green)"}>
-          {alert ? "Alert: route to compliance" : "Clear"}
+          {alert ? "Alert: hold for fraud review" : "Clear"}
         </Text>
         <Text mt={2} fontSize="14px" color="var(--ink-2)" lineHeight="1.6">
-          Elliptic ground truth: <strong>{known ? (label === ILLICIT ? "illicit" : "licit") : "unlabeled"}</strong>
+          Elliptic ground truth: <strong>{known ? (label === ILLICIT ? "fraud" : "legitimate") : "unlabeled"}</strong>
           {known && (
             <Text as="span" fontWeight={700} color={correct ? "var(--green)" : "#b4532a"}>
               {correct ? " ✓ the model was right" : " ✗ the model was wrong"}
@@ -201,7 +201,7 @@ function ScreenOne({ scored }: { scored: Scored }) {
   const all = useMemo(() => [...scored.illicitRows, ...scored.licitRows], [scored]);
   const buttons: { label: string; rows: readonly number[] }[] = [
     { label: "Random transaction", rows: all },
-    { label: "Random illicit", rows: scored.illicitRows },
+    { label: "Random fraud", rows: scored.illicitRows },
     { label: "Random licit", rows: scored.licitRows },
   ];
   return (
@@ -259,16 +259,16 @@ function ScreenWindow({ scored }: { scored: Scored }) {
       {result && (
         <Box mt={6}>
           <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={3} maxW="520px">
-            <Cell label="Illicit, caught" value={result.caught} tone="good" />
-            <Cell label="Illicit, missed" value={result.missed} tone="bad" />
+            <Cell label="Fraud, caught" value={result.caught} tone="good" />
+            <Cell label="Fraud, missed" value={result.missed} tone="bad" />
             <Cell label="Licit, false alarms" value={result.falseAlarms} tone="bad" />
             <Cell label="Licit, cleared" value={result.cleared} tone="good" />
           </Grid>
           <Text mt={5} {...eyebrow}>CATCH RATE</Text>
           <Text fontSize="34px" fontWeight={800} color="var(--ink)">{pct(illicit ? result.caught / illicit : Number.NaN)}</Text>
           <Text mt={2} fontSize="15px" lineHeight="1.7" color="var(--ink-2)" maxW="680px">
-            Out of {illicit.toLocaleString()} illicit transactions in weeks the model never saw, it flagged {result.caught.toLocaleString()} while
-            bothering compliance with only {result.falseAlarms.toLocaleString()} false alarms out of {licit.toLocaleString()} licit ones.
+            Out of {illicit.toLocaleString()} fraudulent transactions in weeks the model never saw, it flagged {result.caught.toLocaleString()} while
+            bothering the fraud team with only {result.falseAlarms.toLocaleString()} false alarms out of {licit.toLocaleString()} legitimate ones.
           </Text>
         </Box>
       )}
@@ -305,7 +305,7 @@ export default function ScorePage({ params, cfg, onRunFirst }: ScorePageProps) {
       <div className="page-intro">
         <h1>Put the trained model to work.</h1>
         <p>
-          The model the contributors paid into now protects them: screen your own transactions with it, or explore how it flags suspicious flow in time steps 35–49, a future window no one trained on. Alerts fire at a threshold where only 1% of licit transactions raise a false alarm.
+          The model the contributors paid into now protects them: screen your own transactions with it, or explore how it flags fraud in time steps 35–49, a future window no one trained on. Alerts fire at a threshold where only 1% of legitimate transactions raise a false alarm.
         </p>
       </div>
       {!hasModel && <EmptyState onRunFirst={onRunFirst} />}

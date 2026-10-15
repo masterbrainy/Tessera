@@ -15,9 +15,9 @@ import { isAddress } from "viem";
 import { newClaimWallet } from "../../chain/router";
 
 const QUALITY: [Quality, string, string][] = [
-  ["clean", "Clean", "Labels come from the compliance team's confirmed case files."],
+  ["clean", "Clean", "Labels come from the fraud team's confirmed cases and chargebacks."],
   ["noisy", "Noisy labels", "30% of labels are wrong: an understaffed review queue guessing."],
-  ["compromised", "Compromised", "Every label is inverted, as if a breached pipeline or an insider marked illicit flows clean. Nobody is told; watch whether the consortium notices."],
+  ["compromised", "Compromised", "Every label is inverted, as if a breached pipeline or an insider marked fraud as clean. Nobody is told; watch whether the consortium notices."],
 ];
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
@@ -42,8 +42,8 @@ function StepChart({ ex }: { ex: Exchange }) {
         <BarChart data={rows} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
           <XAxis dataKey="step" tick={{ fontSize: 9, fill: "#8a7663" }} interval={4} stroke="#eadccb" />
           <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} labelFormatter={(s) => `time step ${s}`} />
-          <Bar dataKey="licit" stackId="a" fill="#d8c7b1" isAnimationActive={false} />
-          <Bar dataKey="illicit" stackId="a" fill="#c2410c" isAnimationActive={false} />
+          <Bar dataKey="licit" name="legitimate" stackId="a" fill="#d8c7b1" isAnimationActive={false} />
+          <Bar dataKey="illicit" name="fraud" stackId="a" fill="#c2410c" isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
     </Box>
@@ -59,10 +59,10 @@ function Preview({ ex }: { ex: Exchange }) {
   return (
     <Box mt={3} p={3} borderRadius="12px" bg="var(--panel-2)">
       <Text fontSize="13px" fontWeight={650}>
-        {st.labeled.toLocaleString()} labeled transactions · {pct(st.illicit / Math.max(1, st.labeled))} truly illicit
+        {st.labeled.toLocaleString()} labeled transactions · {pct(st.illicit / Math.max(1, st.labeled))} truly fraudulent
         {d.source === "uploaded" ? ` · from ${d.fileName}` : " · generated"}
       </Text>
-      {d.steps && <><Text fontSize="11px" color="var(--muted)" mt={1}>Transactions by time step, as this exchange labels them (red = illicit)</Text><StepChart ex={ex} /></>}
+      {d.steps && <><Text fontSize="11px" color="var(--muted)" mt={1}>Transactions by time step, as this exchange labels them (red = fraud)</Text><StepChart ex={ex} /></>}
       <Box as="table" w="100%" mt={2} fontSize="12px" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ color: "var(--muted)", textAlign: "left" }}><th>tx_id</th><th>time step</th><th>label as held</th></tr>
@@ -73,7 +73,7 @@ function Preview({ ex }: { ex: Exchange }) {
               <td style={{ padding: "3px 0" }}><code>{d.txIds[i]}</code></td>
               <td>{d.steps ? d.steps[i] : "—"}</td>
               <td style={{ color: labels[i] !== d.cleanLabels[i] ? "#c2410c" : undefined }}>
-                {labels[i] === 1 ? "illicit" : labels[i] === 0 ? "licit" : "unlabeled"}{labels[i] !== d.cleanLabels[i] ? " (wrong)" : ""}
+                {labels[i] === 1 ? "fraud" : labels[i] === 0 ? "legitimate" : "unlabeled"}{labels[i] !== d.cleanLabels[i] ? " (wrong)" : ""}
               </td>
             </tr>
           ))}
@@ -146,7 +146,7 @@ export default function ExchangeEditor({ ex, onClose, onUpdate, onRegenerate, on
             <Label>TRANSACTIONS: {spec.size.toLocaleString()}</Label>
             <Slider size="small" min={500} max={8000} step={250} value={spec.size} disabled={locked}
               onChange={(_, v) => setSpec({ ...spec, size: v as number })} onChangeCommitted={(_, v) => regen({ ...spec, size: v as number })} />
-            <Label>ILLICIT FLOW REACHING THIS VENUE: {pct(spec.illicitRate, 0)}</Label>
+            <Label>FRAUD REACHING THIS VENUE: {pct(spec.illicitRate, 0)}</Label>
             <Slider size="small" min={0.01} max={0.4} step={0.01} value={spec.illicitRate} disabled={locked}
               onChange={(_, v) => setSpec({ ...spec, illicitRate: v as number })} onChangeCommitted={(_, v) => regen({ ...spec, illicitRate: v as number })} />
             <Label>SCAM WAVES THAT CASH OUT HERE (TIME STEPS, TWO WEEKS EACH)</Label>
@@ -194,7 +194,7 @@ export default function ExchangeEditor({ ex, onClose, onUpdate, onRegenerate, on
               </Select>
             </Flex>
             <Text fontSize="12px" color="var(--ink-2)" mt={2} lineHeight={1.6}>
-              One row per transaction: <code>tx_id</code>, <code>is_illicit</code> (1 or 0) and the consortium's 64 agreed features.
+              One row per transaction: <code>tx_id</code>, <code>is_illicit</code> (1 = fraud, 0 = legitimate) and the consortium's 64 agreed features.
               Values are binned in your browser and never uploaded anywhere.{" "}
               <a href={`${SAMPLE_BASE}template.csv`} download style={{ color: "var(--accent)" }}>Download the template</a>
             </Text>

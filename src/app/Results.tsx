@@ -34,7 +34,7 @@ function Headline({ state }: { state: FedState }) {
   const best = soloFinal.sort((a, b) => b.s.catchRate - a.s.catchRate)[0];
   const pooled = state.pooled.at(-1);
   const stats: [string, string, string][] = [
-    ["Consortium model", pct(last.test.catchRate), "of illicit tx caught at a 1% false-alarm rate"],
+    ["Consortium model", pct(last.test.catchRate), "of fraudulent tx caught at a 1% false-alarm rate"],
     ["Best exchange alone", best ? pct(best.s.catchRate) : "…", best ? `${EXCHANGES[best.lab].name}, on its own data only` : "training baselines…"],
     ["Pooling all raw data", pooled ? pct(pooled.catchRate) : "…", "the privacy-violating ceiling"],
   ];
@@ -126,7 +126,7 @@ function Payouts({ state, onPick }: { state: FedState; onPick: (lab: number) => 
               <Blossom pal={paletteOf(l.lab, atk)} size={34} wilt={atk && rejected > 0} />
               <Box w={{ base: "110px", md: "170px" }} flexShrink={0}>
                 <Text fontSize="14px" fontWeight={650}>{l.name}{atk ? " · attacker" : ""}</Text>
-                <Text fontSize="11px" color="var(--muted)">{l.kind} · {l.n.toLocaleString()} tx · {pct(l.illicit / l.n)} illicit</Text>
+                <Text fontSize="11px" color="var(--muted)">{l.kind} · {l.n.toLocaleString()} tx · {pct(l.illicit / l.n)} fraud</Text>
               </Box>
               <Box flex={1} position="relative" h="10px" borderRadius="6px" bg="var(--panel-2)" overflow="hidden">
                 <MuiTooltip title={`Σ Shapley = ${(c * 1000).toFixed(2)} mnats of validation log-loss`}>

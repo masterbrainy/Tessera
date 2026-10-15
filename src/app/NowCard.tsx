@@ -29,7 +29,7 @@ export default function NowCard({ state, onResults }: { state: FedState; onResul
   }[kind];
 
   const body = {
-    idle: state.error ?? "Each blossom is an exchange holding its own customers' transactions. Press run and they'll train one shared AML model without ever sending a transaction.",
+    idle: state.error ?? "Each blossom is an exchange holding its own customers' transactions. Press run and they'll train one shared fraud model without ever sending a transaction.",
     training: "Every exchange starts from the same global model and trains on data only it can see. Only the resulting weight changes come back.",
     scoring: "The coordinator compares every update against the median of all of them, drops outliers, then replays all coalitions of exchanges to measure what each one actually added.",
     attack: `${rejected.map((l) => EXCHANGES[l.lab].name).join(", ")} sent an update pointing away from everyone else's (cosine ${rejected.map((l) => l.cosine.toFixed(2)).join(", ")}). It was screened out before it could poison the model, and it earns nothing for this round.`,
@@ -55,7 +55,7 @@ export default function NowCard({ state, onResults }: { state: FedState; onResul
           {state.status === "running" && <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, borderRadius: 2 }} />}
           {last && (
             <Flex mt={4} gap={2} wrap="wrap">
-              <Chip size="small" color="success" label={`catches ${pct(last.test.catchRate)} of illicit tx`} />
+              <Chip size="small" color="success" label={`catches ${pct(last.test.catchRate)} of fraud tx`} />
               <Chip size="small" variant="outlined" label={`AUC ${last.test.auc.toFixed(3)}`} />
               <Chip size="small" variant="outlined" label={`model ${last.modelHash.slice(0, 10)}…`} />
               {last.epsilon !== null && <Chip size="small" variant="outlined" label={`ε ${last.epsilon.toExponential(1)}`} />}

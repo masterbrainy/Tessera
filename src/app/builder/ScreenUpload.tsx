@@ -43,7 +43,7 @@ export default function ScreenUpload({ params, cfg, threshold }: { params: Float
       <Text fontSize="20px" fontWeight={700} mt={1}>Run today's transactions through the consortium's model</Text>
       <Text fontSize="14px" color="var(--ink-2)" mt={1} lineHeight={1.6}>
         Upload a CSV in the shared schema (no labels needed). Scoring happens in your browser; the file goes nowhere.
-        You get an alert list at the same 1% false-alarm threshold, ready to hand to your compliance team.
+        You get an alert list at the same 1% false-alarm threshold, ready to hand to your fraud team.
       </Text>
       <Flex gap={3} mt={3} wrap="wrap">
         <Button variant="contained" disableElevation startIcon={<UploadFile />} onClick={() => file.current?.click()}

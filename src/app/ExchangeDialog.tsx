@@ -52,10 +52,10 @@ export default function ExchangeDialog({ lab, state, onClose }: { lab: number | 
 
             <Section title="WHAT IT HOLDS" delay={0.3}>
               <Text fontSize="15px" color="var(--ink-2)" lineHeight={1.6}>
-                {l ? `${l.n.toLocaleString()} labeled Bitcoin transactions from its own customers, ${pct(l.illicit / l.n)} of them illicit. ` : ""}
+                {l ? `${l.n.toLocaleString()} labeled Bitcoin transactions from its own customers, ${pct(l.illicit / l.n)} of them fraudulent. ` : ""}
                 They live inside this exchange's own Web Worker (or its own server, in node mode) and are never sent anywhere.
-                {x.illicitBias > 1.5 ? " As a higher-risk venue, it sees more scam and laundering flow than most, which makes its data unusually valuable." : ""}
-                {x.illicitBias < 0.5 ? " As a regulated custodian, it sees lots of clean volume but few illicit patterns, so its marginal value is lower than its size suggests." : ""}
+                {x.illicitBias > 1.5 ? " As a higher-risk venue, it sees more scam and fraud flow than most, which makes its data unusually valuable." : ""}
+                {x.illicitBias < 0.5 ? " As a regulated custodian, it sees lots of clean volume but few fraud patterns, so its marginal value is lower than its size suggests." : ""}
               </Text>
             </Section>
 
@@ -63,7 +63,7 @@ export default function ExchangeDialog({ lab, state, onClose }: { lab: number | 
               <Section title="WHAT IT TRIED" delay={0.4}>
                 <Text fontSize="15px" color="#c2410c" lineHeight={1.6}>
                   {attack.type === "signFlip" && "Model poisoning: every round it sends its honest update reversed and boosted 4×, trying to steer the shared model backwards."}
-                  {attack.type === "labelFlip" && "Label flipping: it trains on inverted labels, trying to teach the model that its laundering flows look clean."}
+                  {attack.type === "labelFlip" && "Label flipping: it trains on inverted labels, trying to teach the model that its fraud flows look clean."}
                   {attack.type === "noise" && "Free-riding: it sends random weights instead of training, hoping to collect rewards for nothing."}
                 </Text>
               </Section>

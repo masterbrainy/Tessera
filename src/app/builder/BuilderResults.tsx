@@ -109,7 +109,7 @@ function Headline({ snap }: { snap: Snapshot }) {
   const best = solos.sort((a, b) => b.s - a.s)[0];
   const cut = snap.members.filter((_, lab) => rejectedRounds(snap, lab) > 0);
   const tiles: [string, string, string][] = [
-    ["Shared consortium model", pct(last.catchRate), "of illicit transactions caught at a 1% false-alarm rate"],
+    ["Shared consortium model", pct(last.catchRate), "of fraudulent transactions caught at a 1% false-alarm rate"],
     ["Best exchange alone", best ? pct(best.s) : "—", best ? `${best.m.name}, trained only on its own data` : ""],
     cut.length
       ? ["Cut from the payout", cut.map((m) => m.name).join(", "), "updates rejected: their data pulls against everyone else's"]

@@ -82,7 +82,7 @@ export function parseCsv(text: string, schema: Schema, fileName: string, require
     if (steps) steps[r] = Number(cells[stepCol!]) || 0;
     txIds[r] = idCol === undefined ? String(r + 1) : (cells[idCol] ?? "").trim();
   }
-  if (!labeled && requireLabels) throw new Error("No labeled rows: add an is_illicit column (1 = illicit, 0 = licit) so this data can teach the model.");
+  if (!labeled && requireLabels) throw new Error("No labeled rows: add an is_illicit column (1 = fraud, 0 = legitimate) so this data can teach the model.");
   return { source: "uploaded", fileName, bins, cleanLabels: labels, txIds, steps, rows };
 }
 

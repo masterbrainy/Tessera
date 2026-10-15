@@ -41,7 +41,7 @@ export default function ClaimPage({ wallet, name }: { wallet: ClaimWallet; name:
       <div className="page-intro">
         <h1>{name}, your data earned this.</h1>
         <p>
-          A Tessera data market paid you in AUSD for your contribution to a shared anti-money-laundering model. It was sent to a claim
+          A Tessera data market paid you in AUSD for your contribution to a shared crypto fraud model. It was sent to a claim
           wallet that only this link can open. Move it to any address you control; you don't need to have had a wallet or any crypto before.
         </p>
       </div>

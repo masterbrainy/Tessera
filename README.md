@@ -1,6 +1,6 @@
 # Tessera
 
-**A market where companies get paid for what their private data is worth, without ever sharing it.** Contributors train a shared model; their data never moves, only model updates do. Each one is paid by exactly how much its data improved the model (exact Shapley values, settled onchain), bad data is caught and earns nothing, and the finished model goes back to work for its members. The first live market is anti-money-laundering across crypto exchanges; the same mechanism fits card fraud, credit risk and insurance claims.
+**A market where companies get paid for what their private data is worth, without ever sharing it.** Contributors train a shared model; their data never moves, only model updates do. Each one is paid by exactly how much its data improved the model (exact Shapley values, settled onchain), bad data is caught and earns nothing, and the finished model goes back to work for its members. The first live market is crypto fraud and scams, pooled across exchanges; the same mechanism fits anti-money-laundering, card fraud, credit risk and insurance claims.
 
 **Live app:** https://masterbrainy.github.io/Tessera/ (training runs in your browser, nothing to install)
 
@@ -21,7 +21,7 @@ Built at B@BHacks 2.0 for **Most Technically Impressive** and the **YZi Labs** t
 
 ## The bottleneck
 
-Illicit crypto flow is fragmented. One scam wave cashes out through an offshore exchange, a ransomware crew through an OTC desk, a mule network through crypto ATMs. **Each venue sees only part of the pattern.** Privacy law, competition and customer trust keep them from pooling transaction data, so every compliance team trains on its own slice and misses what its peers already saw.
+Crypto fraud is fragmented. One scam wave cashes out through an offshore exchange, a ransomware crew through an OTC desk, a mule network through crypto ATMs. **Each venue sees only part of the pattern.** Privacy law, competition and customer trust keep them from pooling transaction data, so every compliance team trains on its own slice and misses what its peers already saw.
 
 Federated learning fixes the data problem: share what you *learned*, not what you *hold*. But two problems keep consortia like this from forming in the real world:
 
@@ -44,7 +44,7 @@ Tessera handles both and settles the answer onchain.
 
 ## Results (real data, nothing hard-coded)
 
-Data: the [Elliptic Bitcoin dataset](https://www.kaggle.com/datasets/ellipticco/elliptic-data-set): 46,564 real Bitcoin transactions labeled illicit or licit across 49 time steps. Steps 1–30 are split across exchanges (non-IID: different sizes, and each scam wave concentrates at one venue). Steps 31–34 are the consortium's validation window, and **all metrics are on steps 35–49, future weeks no one trained on.**
+Data: the [Elliptic Bitcoin dataset](https://www.kaggle.com/datasets/ellipticco/elliptic-data-set): 46,564 real Bitcoin transactions labeled illicit (scams, Ponzi schemes, ransomware and other criminal flow) or licit across 49 time steps. Steps 1–30 are split across exchanges (non-IID: different sizes, and each scam wave concentrates at one venue). Steps 31–34 are the consortium's validation window, and **all metrics are on steps 35–49, future weeks no one trained on.**
 
 "Catch rate" = share of illicit transactions flagged when only 1% of licit ones trigger false alarms.
 
@@ -62,7 +62,7 @@ Reproduce: `npx tsx node/experiment.ts '{}' baselines` and `npx tsx node/experim
 
 ## Benchmark run (replay-verifiable onchain)
 
-1. Open **Benchmark** in the [live app](https://masterbrainy.github.io/Tessera/) and press **Run the consortium**. Watch updates travel the vines and see the malicious exchange's update stopped at the coordinator.
+1. Open **Benchmark** in the [live app](https://masterbrainy.github.io/Tessera/) and press **Run the consortium**. Watch updates travel the skyline's roads to the coordinator tower and see the malicious exchange's update stopped at a red shield.
 2. Change the scenario: pick a different attacker or attack type ("whitelist my flows" label flipping, garbage updates), switch the defense to plain FedAvg and watch the model collapse, or turn on DP.
 3. Click any exchange for its round-by-round screening scores and Shapley values.
 4. **Ledger** lists runs committed onchain. Press **Replay & verify** to re-train in your browser and match every fingerprint.

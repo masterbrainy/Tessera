@@ -1,7 +1,7 @@
 # Tessera: product requirements
 
 **One line:** a market where companies get paid for what their private data is worth, without ever sharing it.
-**First market:** crypto anti-money-laundering (AML).
+**First market:** crypto fraud and scams (reframed from AML on 2026-10-14; AML is a next market).
 **Status:** hackathon build (B@BHacks 2.0, 2026-10-11). Live at https://masterbrainy.github.io/Tessera/.
 Requirements below are tagged **Shipped** (in the live build, verified) or **Planned** (roadmap).
 

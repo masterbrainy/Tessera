@@ -23,7 +23,7 @@ A market where companies get paid for what their private data is worth, without 
 Tessera lets companies that can't share data train one model together and get paid for what their data
 contributed. Raw data never leaves each company; only model updates do. Every contribution is priced with exact
 Shapley values, bad or poisoned data earns 0, runs are committed on BSC testnet where anyone can replay and
-verify them, and contributors are paid in Agora's AUSD stablecoin. First market: crypto anti-money-laundering.
+verify them, and contributors are paid in Agora's AUSD stablecoin. First market: crypto fraud and scams.
 
 ## The problem
 The most valuable data for catching fraud and money laundering is locked inside companies that are not allowed
@@ -103,13 +103,13 @@ one trained on.
   which already exists (`fund()`); today we fund it from Agora's testnet faucet.
 - **Permissioned commits and challenges.** A coordinator registry plus a challenge window, so a run that fails
   replay can be disputed before payouts finalize.
-- **More markets on the same engine.** Card and payments fraud, credit risk, insurance claims fraud: anywhere the
+- **More markets on the same engine.** Anti-money-laundering, card and payments fraud, credit risk, insurance claims fraud: anywhere the
   signal is spread across companies that can't pool their data.
 - **Pilot.** A shared feature spec and a small client that runs inside a member's environment, starting with a
   handful of exchanges.
 
 ## Why YZi Labs
-Binance and every other exchange face the same bottleneck: the data that would catch laundering is spread across
+Binance and every other exchange face the same bottleneck: the data that would catch scams and fraud is spread across
 competitors who can't share it. Tessera turns that data into a paid, verifiable contribution instead of a
 liability, it records every run on BNB Chain, and the engine extends to every market where data can't move.
 

@@ -8,8 +8,8 @@ people, so the framing is **finance**, not medical.
 ## Pitch (updated 2026-10-11 by the user, this framing wins)
 A **market where companies get paid for what their private data is worth, without sharing it**. Not "we
 train a model": contributors are paid by contribution (Shapley), bad data earns 0, and the trained model is then
-used for good (members screen their own transactions for laundering/fraud). AML is the first live market, not
-the only one (card fraud, credit risk, insurance claims use the same mechanism).
+used for good (members screen their own transactions for scams/fraud). Crypto fraud and scams is the first live market
+(reframed from AML on 2026-10-14); AML, card fraud, credit risk and insurance claims use the same mechanism.
 
 Original AML framing, still accurate for the first market: Crypto exchanges / VASPs each see only a slice of illicit flow (scam waves cash out through
 different venues), but can't share customer transaction data (privacy, competition, regulation).
@@ -41,7 +41,7 @@ Headline metric: **catch rate** = share of illicit tx flagged at a 1% false-alar
   - `federation.ts` RunConfig, `labUpdate` (what an exchange does), `coordinate` (one round), `runFederation`, baselines, payouts
   - `hash.ts` keccak of params (float64 LE) + canonical JSON
 - `src/workers/` Web Workers: one per exchange (`lab.worker`), `coordinator.worker`, `baseline.worker` (solo + pooled curves), `replay.worker` (verification)
-- `src/app/` React UI ported from github.com/visheshv5/bloom (Chakra v2 + MUI v6 + framer-motion, warm "garden" palette, Inter). Exchanges = flowers, coordinator = sunflower hub.
+- `src/app/` React UI ported from github.com/visheshv5/bloom (Chakra v2 + MUI v6 + framer-motion, Inter). Visual is a 3D isometric skyline (`Skyline.jsx`): exchanges = buildings, coordinator = central tower, updates = packets on roads.
 - `src/chain/` `abi.ts` (generated), `ledger.ts` (commit/fetch runs, keyless deterministic exchange payout addresses), `deployment.json`
 - `contracts/TesseraLedger.sol` ledger + `ConsortiumUSD` (cUSD) reward token. `pnpm compile` (solc-js) regenerates `src/chain/abi.ts`.
 - `node/` real distributed mode: `lab-server.ts` (one HTTP process per exchange), `coordinator.ts --spawn [--submit]`, `chain/deploy.ts`, `experiment.ts` (tuning sweeps)
@@ -58,7 +58,7 @@ GitHub Pages (only `gh` is authenticated on this machine; no Vercel/Fly/etc). Pu
 ## Status (update as you go)
 - LIVE: https://masterbrainy.github.io/Tessera/ (GitHub Actions deploys on every push to main; runs `pnpm test` + `pnpm build`)
 - REPO: https://github.com/masterbrainy/Tessera (public)
-- DONE: data, engine, distributed HTTP mode, contract + compile, deploy script, workers, full bloom-style UI (garden, scenario, results, payouts, commit card, exchange dialog, how-it-works, ledger + replay verify, screen-a-transaction), 7 vitest tests, README
+- DONE: data, engine, distributed HTTP mode, contract + compile, deploy script, workers, full bloom-style UI (skyline, scenario, results, payouts, commit card, exchange dialog, how-it-works, ledger + replay verify, screen-a-transaction), 7 vitest tests, README
 - VERIFIED: browser and Node produce the same final model hash for the default config (0x0451f9b6…)
 - ONCHAIN: TesseraLedger 0x751199289a537366a6f56f2c54fb4d5938221ea3, cUSD 0x2A001a150DECF58B9e2d3cFC4b299959cc39E121 (BSC testnet). Runs #0 defended, #1 plain FedAvg under attack, #2 DP, all committed by `node/coordinator.ts --spawn --submit`. Deployer has ~0.00025 tBNB left (~5 more commits at 0.1 gwei).
 - DONE (15:40): **Data market** is the default tab (`src/app/builder/`): add exchanges, generate each one's data from a
